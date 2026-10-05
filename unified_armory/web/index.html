@@ -8,33 +8,43 @@
 </head>
 <body>
 <header class="top">
-  <div>
-    <h1>Unified Armory</h1>
-    <p class="sub">Wear armor from any Halo game in every Master Chief Collection campaign.</p>
-  </div>
-  <div class="actions">
-    <input id="name" aria-label="Profile name" maxlength="64">
-    <button id="save">Save</button>
-    <button id="build" class="primary">Build mod</button>
-  </div>
+  <h1>Unified Armory</h1>
+  <p class="sub">Wear armor from any Halo game in every Master Chief Collection campaign.</p>
 </header>
 <p id="status" role="status"></p>
 <main>
   <section class="panel" id="loadout">
-    <h2>Loadout</h2>
-    <p class="hint">Each piece is the real model from its game, ported into every campaign below.</p>
+    <h2><span class="step">1</span> Pick your armor</h2>
+    <p class="hint">Every piece is the real model from its game.</p>
     <div id="colors"></div>
     <div id="slots"></div>
+    <details id="pergame">
+      <summary>Different armor for a specific game</summary>
+      <div id="games"></div>
+    </details>
   </section>
-  <div class="col">
-    <section class="panel" id="sources">
-      <h2>Source models</h2>
-      <p class="hint">Models this loadout needs from each game's Editing Kit. Build mod writes the extraction scripts for any that are missing.</p>
-      <ul id="models"></ul>
-    </section>
-    <section id="result" class="panel" hidden></section>
-    <section id="games"></section>
-  </div>
+
+  <section class="panel" id="applypanel">
+    <h2><span class="step">2</span> Apply to your games</h2>
+    <p class="hint">Unified Armory adds your armor to each campaign below and installs it into MCC. Your original maps are backed up first.</p>
+    <ul id="gamelist"></ul>
+    <div class="buttons">
+      <button id="apply" class="primary big">Apply to my games</button>
+      <button id="restore">Restore original maps</button>
+    </div>
+    <p class="hint small">This takes a while the first time: each campaign's levels are rebuilt. Then start MCC and choose
+      <strong>Play with mods (EAC off)</strong>.</p>
+    <div id="progress" hidden>
+      <p id="jobstate"></p>
+      <pre id="log" tabindex="0" aria-label="Progress log"></pre>
+    </div>
+    <details id="settings">
+      <summary>Settings</summary>
+      <p class="hint">Only needed if something wasn't found automatically.</p>
+      <div id="paths"></div>
+      <button id="savepaths">Save folders</button>
+    </details>
+  </section>
 </main>
 <script src="app.js"></script>
 </body>

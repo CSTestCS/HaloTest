@@ -49,7 +49,7 @@ class Catalog:
     def to_json(self) -> dict:
         return {
             "slots": SLOTS,
-            "games": {g["id"]: {"id": g["id"], "name": g["name"], "toolkit": g["toolkit"],
+            "games": {g["id"]: {"id": g["id"], "name": g["name"], "toolkit": g["toolkit"], "tools_name": g.get("tools_name", g["toolkit"]),
                                 "verify": g.get("_verify", ""),
                                 "color_channels": list(g["target"]["change_colors"]["channels"])}
                       for g in self.ordered_games()},

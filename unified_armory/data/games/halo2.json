@@ -3,6 +3,12 @@
   "name": "Halo 2",
   "order": 2,
   "toolkit": "H2 Editing Kit (H2EK)",
+  "tools_name": "Halo 2 Mod Tools",
+  "kit_folders": [
+    "H2EK",
+    "Halo 2 Editing Kit"
+  ],
+  "mcc_maps": "halo2\\h2_maps_win64_dx11",
   "managedblam": true,
   "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
   "models": {

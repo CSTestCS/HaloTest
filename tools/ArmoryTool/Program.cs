@@ -1,18 +1,13 @@
 // ArmoryTool: the Editing Kit side of Unified Armory, built on ManagedBlam.
 //
 //   ArmoryTool extract <EditingKitPath> <jobs.json>
-//       Dump render models, the shaders they use, and export those shaders' bitmaps
-//       (via the kit's tool.exe) into the Unified Armory cache.
-//   ArmoryTool dump <EditingKitPath> <tag path with extension> <out.json>
-//       Dump any tag as a generic field tree (for debugging field names).
-//   ArmoryTool apply <EditingKitPath> <plan.json> --stage pre|post [--dry-run]
-//       Write a build plan's tag edits.
+//   ArmoryTool dump    <EditingKitPath> <tag path with extension> <out.json>
+//   ArmoryTool apply   <EditingKitPath> <plan.json> --stage pre|post [--dry-run]
 //
-// The tool deliberately knows nothing about tag layouts. Dumps are generic trees of
-// {n: name, t: kind, v: value, e: elements} that the Python side interprets, and edits
-// find fields by name (recursive, case-insensitive) and write values through each
-// field's Data/Path property by reflection. That keeps one binary working across the
-// H2, H3, ODST, Reach and H4 kits, whose structs nest and name things differently.
+// ManagedBlam.dll is loaded at runtime from <kit>\bin and used purely through reflection,
+// so this compiles without any kit installed and one binary serves the H2,
+// H3, ODST, Reach and H4 kits. It knows nothing about tag layouts: dumps are generic
+// field trees for the Python side to interpret, and edits find fields by name.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,13 +16,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web.Script.Serialization;
-using Bungie;
-using Bungie.Tags;
 
 internal static class Program
 {
     static string EK;
     static bool DryRun;
+    static Assembly MB;
     static Dictionary<string, string> Fields = new Dictionary<string, string>();
     static readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = int.MaxValue, RecursionLimit = 1000 };
 
@@ -40,45 +34,85 @@ internal static class Program
         }
         EK = Path.GetFullPath(args[1]);
         DryRun = args.Contains("--dry-run");
-        AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
-        {
-            string candidate = Path.Combine(EK, "bin", new AssemblyName(e.Name).Name + ".dll");
-            return File.Exists(candidate) ? Assembly.LoadFrom(candidate) : null;
-        };
         try
         {
-            return Run(args);
+            LoadManagedBlam();
+            try { return Run(args); }
+            finally { Call(MBType("Bungie.ManagedBlamSystem"), "Stop"); }
         }
         catch (Exception ex)
         {
+            while (ex is TargetInvocationException && ex.InnerException != null) ex = ex.InnerException;
             Console.Error.WriteLine("error: " + ex.Message);
             return 2;
         }
     }
 
-    // Kept separate from Main so ManagedBlam types aren't touched before AssemblyResolve is hooked.
+    static void LoadManagedBlam()
+    {
+        string bin = Path.Combine(EK, "bin");
+        string dll = Path.Combine(bin, "ManagedBlam.dll");
+        if (!File.Exists(dll)) throw new FileNotFoundException($"ManagedBlam.dll not found in {bin}; is this an MCC Editing Kit folder?");
+        Environment.SetEnvironmentVariable("PATH", bin + ";" + Environment.GetEnvironmentVariable("PATH"));
+        AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
+        {
+            string candidate = Path.Combine(bin, new AssemblyName(e.Name).Name + ".dll");
+            return File.Exists(candidate) ? Assembly.LoadFrom(candidate) : null;
+        };
+        MB = Assembly.LoadFrom(dll);
+        Environment.CurrentDirectory = EK;
+        var sys = MBType("Bungie.ManagedBlamSystem");
+        var init = sys.GetMethods().First(m => m.Name == "InitializeProject");
+        var ps = init.GetParameters();
+        var argv = new object[ps.Length];
+        for (int i = 0; i < ps.Length; i++)
+        {
+            if (ps[i].ParameterType.IsEnum) argv[i] = Enum.Parse(ps[i].ParameterType, "TagsOnly");
+            else if (ps[i].ParameterType == typeof(string)) argv[i] = EK;
+            else argv[i] = ps[i].HasDefaultValue ? ps[i].DefaultValue : null;
+        }
+        init.Invoke(null, argv);
+    }
+
+    static Type MBType(string name) => MB.GetType(name, true);
+    static object Call(Type t, string method, params object[] a) => t.GetMethod(method, a.Select(x => x.GetType()).ToArray()).Invoke(null, a);
+
     static int Run(string[] args)
     {
-        Environment.CurrentDirectory = EK;
-        ManagedBlamSystem.InitializeProject(InitializationType.TagsOnly, EK);
-        try
+        switch (args[0])
         {
-            switch (args[0])
-            {
-                case "extract": return Extract(args[2]);
-                case "dump": File.WriteAllText(args[3], Json.Serialize(DumpTag(args[2]))); return 0;
-                case "apply":
-                    int i = Array.IndexOf(args, "--stage");
-                    if (i < 0 || i + 1 >= args.Length) throw new ArgumentException("apply needs --stage pre|post");
-                    return Apply(args[2], args[i + 1]);
-                default: throw new ArgumentException("unknown command " + args[0]);
-            }
-        }
-        finally
-        {
-            ManagedBlamSystem.Stop();
+            case "extract": return Extract(args[2]);
+            case "dump": File.WriteAllText(args[3], Json.Serialize(DumpTag(args[2]))); return 0;
+            case "apply":
+                int i = Array.IndexOf(args, "--stage");
+                if (i < 0 || i + 1 >= args.Length) throw new ArgumentException("apply needs --stage pre|post");
+                return Apply(args[2], args[i + 1]);
+            default: throw new ArgumentException("unknown command " + args[0]);
         }
     }
+
+    // ---------------------------------------------------------------- ManagedBlam access
+
+    static object ToTagPath(string relative)
+    {
+        string ext = Path.GetExtension(relative).TrimStart('.');
+        return Call(MBType("Bungie.Tags.TagPath"), "FromPathAndExtension", relative.Substring(0, relative.Length - ext.Length - 1), ext);
+    }
+
+    static object OpenTag(string relative) => Activator.CreateInstance(MBType("Bungie.Tags.TagFile"), ToTagPath(relative));
+
+    static object Invoke(object target, string method) =>
+        target.GetType().GetMethod(method, System.Type.EmptyTypes).Invoke(target, null);
+
+    static IEnumerable<object> FieldsOf(object owner) =>
+        ((IEnumerable)owner.GetType().GetProperty("Fields").GetValue(owner)).Cast<object>();
+    static IEnumerable<object> ElementsOf(object field) =>
+        (field.GetType().GetProperty("Elements")?.GetValue(field) as IEnumerable)?.Cast<object>() ?? Enumerable.Empty<object>();
+    static bool IsBlock(object f) => f.GetType().Name.Contains("Block");
+    static bool IsReference(object f) => f.GetType().Name.Contains("Reference");
+    static bool HasElements(object f) => f.GetType().GetProperty("Elements") != null;
+    static string NameOf(object f) => f.GetType().GetProperty("FieldName")?.GetValue(f) as string ?? "";
+    static string DisplayOf(object f) => f.GetType().GetProperty("DisplayName")?.GetValue(f) as string ?? "";
 
     // ---------------------------------------------------------------- extract
 
@@ -96,8 +130,6 @@ internal static class Program
                 Directory.CreateDirectory(Path.Combine(outDir, "shaders"));
                 Directory.CreateDirectory(Path.Combine(outDir, "bitmaps"));
                 var model = DumpTag(tag);
-                File.WriteAllText(Path.Combine(outDir, "model.json"), Json.Serialize(model));
-
                 var shaders = References(model).Where(r => !r.EndsWith(".bitmap", StringComparison.OrdinalIgnoreCase)
                     && (r.Contains(".shader") || r.EndsWith(".material", StringComparison.OrdinalIgnoreCase))).Distinct().ToList();
                 var bitmaps = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -110,7 +142,7 @@ internal static class Program
                         foreach (var b in References(dump).Where(r => r.EndsWith(".bitmap", StringComparison.OrdinalIgnoreCase)))
                             bitmaps.Add(b);
                     }
-                    catch (Exception ex) { Console.Error.WriteLine($"  shader {shader}: {ex.Message}"); }
+                    catch (Exception ex) { Console.Error.WriteLine($"  shader {shader}: {Inner(ex).Message}"); }
                 }
                 foreach (var bitmap in bitmaps)
                 {
@@ -119,18 +151,22 @@ internal static class Program
                     var p = Process.Start(new ProcessStartInfo("cmd.exe", "/c " + cmd) { WorkingDirectory = EK, UseShellExecute = false });
                     p.WaitForExit();
                     if (p.ExitCode != 0 || !File.Exists(outFile))
-                        Console.Error.WriteLine($"  bitmap {bitmap}: export failed (check bitmap_export in the game's data file)");
+                        Console.Error.WriteLine($"  bitmap {bitmap}: export failed");
                 }
+                // Written last: its presence marks the extraction as complete.
+                File.WriteAllText(Path.Combine(outDir, "model.json"), Json.Serialize(model));
                 Console.WriteLine($"  ok: {shaders.Count} shaders, {bitmaps.Count} bitmaps");
             }
             catch (Exception ex)
             {
                 failures++;
-                Console.Error.WriteLine($"  FAIL {tag}: {ex.Message}");
+                Console.Error.WriteLine($"  FAIL {tag}: {Inner(ex).Message}");
             }
         }
         return failures == 0 ? 0 : 2;
     }
+
+    static Exception Inner(Exception ex) { while (ex is TargetInvocationException && ex.InnerException != null) ex = ex.InnerException; return ex; }
 
     static string Slug(string tagPath)
     {
@@ -158,24 +194,24 @@ internal static class Program
 
     static Dictionary<string, object> DumpTag(string relative)
     {
-        using (var tag = new TagFile(ToTagPath(relative)))
-            return new Dictionary<string, object> { ["tag"] = relative, ["fields"] = tag.Fields.Select(DumpField).ToList() };
+        object tag = OpenTag(relative);
+        try { return new Dictionary<string, object> { ["tag"] = relative, ["fields"] = FieldsOf(tag).Select(f => (object)DumpField(f)).ToList() }; }
+        finally { ((IDisposable)tag).Dispose(); }
     }
 
-    static Dictionary<string, object> DumpField(TagField f)
+    static Dictionary<string, object> DumpField(object f)
     {
-        var d = new Dictionary<string, object> { ["n"] = f.FieldName };
-        var elements = f.GetType().GetProperty("Elements")?.GetValue(f) as IEnumerable;
-        if (elements != null)
+        var d = new Dictionary<string, object> { ["n"] = NameOf(f) };
+        if (HasElements(f))
         {
             string type = f.GetType().Name;
             d["t"] = type.Contains("Block") ? "block" : type.Contains("Array") ? "array" : "struct";
-            d["e"] = elements.Cast<TagElement>().Select(el => el.Fields.Select(DumpField).ToList()).ToList();
+            d["e"] = ElementsOf(f).Select(el => FieldsOf(el).Select(x => (object)DumpField(x)).ToList()).ToList();
         }
-        else if (f is TagFieldReference r)
+        else if (IsReference(f))
         {
             d["t"] = "ref";
-            d["v"] = RefPath(r);
+            d["v"] = RefPath(f.GetType().GetProperty("Path")?.GetValue(f));
         }
         else
         {
@@ -185,19 +221,16 @@ internal static class Program
         return d;
     }
 
-    static string RefPath(TagFieldReference r)
+    static string RefPath(object p)
     {
-        var p = r.Path;
         if (p == null) return "";
         var t = p.GetType();
-        var full = t.GetProperty("RelativePathWithExtension")?.GetValue(p) as string;
-        if (full != null) return full;
+        if (t.GetProperty("RelativePathWithExtension")?.GetValue(p) is string full) return full;
         var rel = t.GetProperty("RelativePath")?.GetValue(p) as string;
         var ext = t.GetProperty("Extension")?.GetValue(p) as string;
         return rel != null ? (string.IsNullOrEmpty(ext) ? rel : rel + "." + ext) : p.ToString();
     }
 
-    // Turn a field's Data into something JSON-friendly: numbers, strings, lists, or {x,y,z...} objects.
     static object Plain(object v, int depth = 0)
     {
         if (v == null || v is string || v is bool || v.GetType().IsPrimitive || v is decimal) return v;
@@ -226,16 +259,8 @@ internal static class Program
         int failures = 0;
         foreach (var op in ops)
         {
-            try
-            {
-                Console.WriteLine("  " + Describe(op));
-                Do(op);
-            }
-            catch (Exception ex)
-            {
-                failures++;
-                Console.Error.WriteLine($"    FAIL: {ex.Message}");
-            }
+            try { Console.WriteLine("  " + Describe(op)); Do(op); }
+            catch (Exception ex) { failures++; Console.Error.WriteLine($"    FAIL: {Inner(ex).Message}"); }
         }
         return failures == 0 ? 0 : 2;
     }
@@ -258,33 +283,38 @@ internal static class Program
         {
             case "copy_tag": CopyTag((string)op["from"], (string)op["to"]); break;
             case "clone_shader": CloneShader(op); break;
-            case "set_reference": Edit((string)op["tag"], t => Find<TagFieldReference>(t.Fields, (string)op["field"]).Path = ToTagPath((string)op["value"])); break;
+            case "set_reference": Edit((string)op["tag"], t => SetPath(Find(FieldsOf(t), (string)op["field"], IsReference), (string)op["value"])); break;
             case "set_change_color": Edit((string)op["tag"], t => SetChangeColor(t, op)); break;
             default: throw new NotSupportedException($"unknown op {op["op"]}");
         }
     }
 
-    static string TagFilePath(string relative) => Path.Combine(EK, "tags", relative);
-
     static void CopyTag(string from, string to)
     {
-        string src = TagFilePath(from), dst = TagFilePath(to);
+        string src = Path.Combine(EK, "tags", from), dst = Path.Combine(EK, "tags", to);
         if (!File.Exists(src)) throw new FileNotFoundException("source tag not found", src);
         if (DryRun) return;
         Directory.CreateDirectory(Path.GetDirectoryName(dst));
         File.Copy(src, dst, true);
     }
 
-    static void Edit(string tagPath, Action<TagFile> change)
+    static void Edit(string tagPath, Action<object> change)
     {
-        using (var tag = new TagFile(ToTagPath(tagPath)))
+        object tag = OpenTag(tagPath);
+        try
         {
             change(tag);
-            if (!DryRun) tag.Save();
+            if (!DryRun) Invoke(tag, "Save");
         }
+        finally { ((IDisposable)tag).Dispose(); }
     }
 
-    // Copy the target's armor shader and point its bitmap parameters at the ported textures.
+    static void SetPath(object referenceField, string value)
+    {
+        if (DryRun) return;
+        referenceField.GetType().GetProperty("Path").SetValue(referenceField, ToTagPath(value));
+    }
+
     static void CloneShader(Dictionary<string, object> op)
     {
         string to = (string)op["to"];
@@ -293,78 +323,71 @@ internal static class Program
         if (DryRun || bitmaps.Count == 0) return;
         Edit(to, tag =>
         {
-            var parameters = Search(tag.Fields, Fields["shader_parameters"]).OfType<TagFieldBlock>().FirstOrDefault();
+            var top = FieldsOf(tag).ToList();
+            var parameters = Search(top, Fields["shader_parameters"]).FirstOrDefault(IsBlock);
             foreach (var kv in bitmaps)
             {
-                var path = ToTagPath((string)kv.Value);
-                // Shaders with a fixed bitmap field of this name (e.g. Halo CE style "base map").
-                var direct = Search(tag.Fields, kv.Key).OfType<TagFieldReference>().FirstOrDefault();
-                if (direct != null) { direct.Path = path; continue; }
+                var direct = Search(top, kv.Key).FirstOrDefault(IsReference);
+                if (direct != null) { SetPath(direct, (string)kv.Value); continue; }
                 if (parameters == null) throw new MissingFieldException($"no '{Fields["shader_parameters"]}' block or '{kv.Key}' field in template");
-                TagElement param = null;
-                foreach (TagElement el in parameters.Elements)
-                    if (string.Equals(Convert.ToString(GetData(Find<TagField>(el.Fields, Fields["shader_parameter_name"]))), kv.Key, StringComparison.OrdinalIgnoreCase))
+                object param = null;
+                foreach (var el in ElementsOf(parameters))
+                    if (string.Equals(Convert.ToString(GetData(Find(FieldsOf(el), Fields["shader_parameter_name"], f => true))), kv.Key, StringComparison.OrdinalIgnoreCase))
                         param = el;
                 if (param == null)
                 {
-                    // Template lacks this map: add a parameter (type left at its default, the bitmap type in H3-family shaders).
-                    param = parameters.AddElement();
-                    SetData(Find<TagField>(param.Fields, Fields["shader_parameter_name"]), kv.Key);
+                    param = Invoke(parameters, "AddElement");
+                    SetData(Find(FieldsOf(param), Fields["shader_parameter_name"], f => true), kv.Key);
                 }
-                Find<TagFieldReference>(param.Fields, Fields["shader_parameter_bitmap"]).Path = path;
+                SetPath(Find(FieldsOf(param), Fields["shader_parameter_bitmap"], IsReference), (string)kv.Value);
             }
         });
     }
 
-    // Pin change color N to one permutation whose lower and upper bounds are the exact color.
-    static void SetChangeColor(TagFile tag, Dictionary<string, object> op)
+    static void SetChangeColor(object tag, Dictionary<string, object> op)
     {
         int index = Convert.ToInt32(op["index"]);
         float[] rgb = ((object[])op["color"]).Select(Convert.ToSingle).ToArray();
-        var changeColors = Find<TagFieldBlock>(tag.Fields, Fields["change_colors"]);
-        while (changeColors.Elements.Count <= index) changeColors.AddElement();
-        var perms = Find<TagFieldBlock>(changeColors.Elements[index].Fields, Fields["change_color_permutations"]);
-        perms.RemoveAllElements();
-        var perm = perms.AddElement();
-        SetData(Find<TagField>(perm.Fields, Fields["permutation_weight"]), 1.0f);
-        SetData(Find<TagField>(perm.Fields, Fields["color_lower_bound"]), rgb);
-        SetData(Find<TagField>(perm.Fields, Fields["color_upper_bound"]), rgb);
+        object changeColors = Find(FieldsOf(tag), Fields["change_colors"], IsBlock);
+        while (ElementsOf(changeColors).Count() <= index) Invoke(changeColors, "AddElement");
+        object element = ElementsOf(changeColors).ElementAt(index);
+        object perms = Find(FieldsOf(element), Fields["change_color_permutations"], IsBlock);
+        if (DryRun) return;
+        Invoke(perms, "RemoveAllElements");
+        object perm = Invoke(perms, "AddElement");
+        SetData(Find(FieldsOf(perm), Fields["permutation_weight"], f => true), 1.0f);
+        SetData(Find(FieldsOf(perm), Fields["color_lower_bound"], f => true), rgb);
+        SetData(Find(FieldsOf(perm), Fields["color_upper_bound"], f => true), rgb);
     }
 
     // ---------------------------------------------------------------- helpers
 
-    static TagPath ToTagPath(string relative)
-    {
-        string ext = Path.GetExtension(relative).TrimStart('.');
-        return TagPath.FromPathAndExtension(relative.Substring(0, relative.Length - ext.Length - 1), ext);
-    }
-
-    static T Find<T>(IEnumerable<TagField> fields, string name) where T : TagField =>
-        Search(fields, name).OfType<T>().FirstOrDefault()
-        ?? throw new MissingFieldException($"field '{name}' ({typeof(T).Name}) not found; check the field names in the game's data file");
+    static object Find(IEnumerable<object> fields, string name, Func<object, bool> accept) =>
+        Search(fields, name).FirstOrDefault(accept)
+        ?? throw new MissingFieldException($"field '{name}' not found; check the field names in the game's data file");
 
     // Breadth-first through nested structs/arrays (not blocks), so the shallowest match wins.
-    static IEnumerable<TagField> Search(IEnumerable<TagField> fields, string name)
+    static IEnumerable<object> Search(IEnumerable<object> fields, string name)
     {
-        var queue = new Queue<TagField>(fields);
+        var queue = new Queue<object>(fields);
         while (queue.Count > 0)
         {
             var f = queue.Dequeue();
-            if (string.Equals(f.FieldName?.Trim(), name, StringComparison.OrdinalIgnoreCase)
-                || string.Equals(f.DisplayName?.Trim(), name, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(NameOf(f).Trim(), name, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(DisplayOf(f).Trim(), name, StringComparison.OrdinalIgnoreCase))
                 yield return f;
-            if (!(f is TagFieldBlock) && f.GetType().GetProperty("Elements")?.GetValue(f) is IEnumerable els)
-                foreach (TagElement el in els)
-                    foreach (var child in el.Fields) queue.Enqueue(child);
+            if (!IsBlock(f) && HasElements(f))
+                foreach (var el in ElementsOf(f))
+                    foreach (var child in FieldsOf(el)) queue.Enqueue(child);
         }
     }
 
-    static object GetData(TagField f) => f.GetType().GetProperty("Data")?.GetValue(f);
+    static object GetData(object f) => f.GetType().GetProperty("Data")?.GetValue(f);
 
-    static void SetData(TagField f, object value)
+    static void SetData(object f, object value)
     {
         if (DryRun) return;
-        var prop = f.GetType().GetProperty("Data") ?? throw new NotSupportedException($"{f.FieldName}: no Data property on {f.GetType().Name}");
+        var prop = f.GetType().GetProperty("Data") ?? throw new NotSupportedException($"{NameOf(f)}: no Data property on {f.GetType().Name}");
         var target = prop.PropertyType;
         if (target.IsArray && value is float[] arr)
         {

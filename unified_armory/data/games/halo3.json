@@ -3,6 +3,12 @@
   "name": "Halo 3",
   "order": 3,
   "toolkit": "H3 Editing Kit (H3EK)",
+  "tools_name": "Halo 3 Mod Tools",
+  "kit_folders": [
+    "H3EK",
+    "Halo 3 Editing Kit"
+  ],
+  "mcc_maps": "halo3\\maps",
   "managedblam": true,
   "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
   "models": {

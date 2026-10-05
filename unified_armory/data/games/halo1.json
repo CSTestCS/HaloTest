@@ -3,6 +3,13 @@
   "name": "Halo: Combat Evolved",
   "order": 1,
   "toolkit": "Halo CE Editing Kit (HEK)",
+  "tools_name": "Halo CE Mod Tools",
+  "kit_folders": [
+    "H1EK",
+    "HCEEK",
+    "Halo CE Editing Kit"
+  ],
+  "mcc_maps": "halo1\\maps",
   "managedblam": false,
   "models": {
     "cyborg": {

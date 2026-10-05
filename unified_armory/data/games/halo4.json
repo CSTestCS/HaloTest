@@ -3,6 +3,12 @@
   "name": "Halo 4",
   "order": 6,
   "toolkit": "H4 Editing Kit (H4EK)",
+  "tools_name": "Halo 4 Mod Tools",
+  "kit_folders": [
+    "H4EK",
+    "Halo 4 Editing Kit"
+  ],
+  "mcc_maps": "halo4\\maps",
   "managedblam": true,
   "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
   "models": {

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!--
-    Build:  dotnet build -c Release -p:EKPath="C:\Program Files (x86)\Steam\steamapps\common\H3EK"
-    ManagedBlam ships with the MCC Editing Kits for H2, H3, ODST, Reach and H4. Any kit works
-    for compiling; at runtime ManagedBlam is loaded from whichever kit you pass on the command line.
+    dotnet build -c Release
+    No Editing Kit is needed to compile: ManagedBlam is loaded at runtime from the kit
+    passed on the command line, so this builds on any Windows machine (and in CI).
   -->
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -10,13 +10,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <AssemblyName>ArmoryTool</AssemblyName>
-    <EKPath Condition="'$(EKPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\H3EK</EKPath>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ManagedBlam">
-      <HintPath>$(EKPath)\bin\ManagedBlam.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
 </Project>

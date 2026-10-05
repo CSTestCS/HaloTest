@@ -3,6 +3,13 @@
   "name": "Halo 3: ODST",
   "order": 4,
   "toolkit": "ODST Editing Kit",
+  "tools_name": "Halo 3: ODST Mod Tools",
+  "kit_folders": [
+    "H3ODSTEK",
+    "ODSTEK",
+    "Halo 3 ODST Editing Kit"
+  ],
+  "mcc_maps": "halo3odst\\maps",
   "managedblam": true,
   "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
   "models": {

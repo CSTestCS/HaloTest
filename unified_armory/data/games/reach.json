@@ -3,6 +3,12 @@
   "name": "Halo: Reach",
   "order": 5,
   "toolkit": "Reach Editing Kit (HREK)",
+  "tools_name": "Halo: Reach Mod Tools",
+  "kit_folders": [
+    "HREK",
+    "Halo Reach Editing Kit"
+  ],
+  "mcc_maps": "haloreach\\maps",
   "managedblam": true,
   "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
   "models": {

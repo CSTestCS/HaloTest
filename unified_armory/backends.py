@@ -108,6 +108,8 @@ def write_target(catalog, profile: dict, target_id: str, asm: Assembly, out_dir:
         "fields": {**DEFAULT_FIELDS, **t.get("fields", {})},
         "stages": {"pre": pre, "post": post},
         "import_commands": [c.format(**fmt) for c in t["import_commands"]],
+        "import_templates": list(t["import_commands"]),
+        "maps": [s.replace("\\", "/").rsplit("/", 1)[-1] + ".map" for s in t["scenarios"]],
         "build_commands": [t["build_command"].format(scenario=s) for s in t["scenarios"]],
         "pieces": {SLOTS[s]: catalog.piece(uid)["name"] + f" ({catalog.game(catalog.piece(uid)['game'])['name']})"
                    for s, uid in asm.pieces.items()},

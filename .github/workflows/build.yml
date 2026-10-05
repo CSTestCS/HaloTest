@@ -1,0 +1,64 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate data
+        run: python -m unified_armory validate
+      - name: Tests
+        run: PYTHONPATH=. python -m unittest discover -s tests -v
+
+  package:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build ArmoryTool
+        run: dotnet build tools/ArmoryTool -c Release
+      - name: Build UnifiedArmory.exe
+        run: |
+          python -m pip install --upgrade pyinstaller
+          pyinstaller --noconfirm --onefile --name UnifiedArmory --paths . `
+            --collect-submodules unified_armory `
+            --add-data "unified_armory/data;unified_armory/data" `
+            --add-data "unified_armory/web;unified_armory/web" `
+            --add-data "tools/blender;tools/blender" `
+            packaging/launcher.py
+      - name: Smoke test
+        run: dist/UnifiedArmory.exe validate
+      - name: Assemble zip
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release/UnifiedArmory | Out-Null
+          Copy-Item dist/UnifiedArmory.exe release/UnifiedArmory/
+          Copy-Item tools/ArmoryTool/bin/Release/net48/ArmoryTool.exe release/UnifiedArmory/
+          Copy-Item packaging/README.txt release/UnifiedArmory/
+          Compress-Archive -Path release/UnifiedArmory -DestinationPath release/UnifiedArmory.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UnifiedArmory
+          path: release/UnifiedArmory/
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/UnifiedArmory.zip
+          body_path: packaging/README.txt

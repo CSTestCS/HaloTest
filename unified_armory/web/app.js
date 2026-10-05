@@ -10,7 +10,7 @@ const el = (tag, attrs = {}, ...kids) => {
   n.append(...kids);
   return n;
 };
-let catalog, profile, statusSeq = 0;
+let catalog, profile, env, saveTimer, logSeen = 0, polling = false;
 
 async function api(path, body) {
   const res = await fetch(path, body === undefined ? {} : {
@@ -21,19 +21,11 @@ async function api(path, body) {
   return data;
 }
 const say = (m) => { $("#status").textContent = m; };
-const pieceName = (uid) => {
-  if (uid === "default") return null;
-  const game = uid.split("/")[0];
-  for (const list of Object.values(catalog.pieces)) {
-    const p = list.find((x) => x.uid === uid);
-    if (p) return { name: p.name, game: catalog.games[game].name };
-  }
-  return { name: uid, game: "" };
-};
+const save = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => api("/api/profile", profile).catch((e) => say(`Error: ${e.message}`)), 400); };
 
-function pieceSelect(slot, value, { includeInherit = false, label }) {
+function pieceSelect(slot, value, { inherit = false, label }) {
   const sel = el("select", { "aria-label": label });
-  if (includeInherit) sel.append(el("option", { value: "" }, "Same as loadout"));
+  if (inherit) sel.append(el("option", { value: "" }, "Same as above"));
   sel.append(el("option", { value: "default" }, "Each game's own"));
   for (const [gid, g] of Object.entries(catalog.games)) {
     const opts = catalog.pieces[slot].filter((p) => p.game === gid);
@@ -47,99 +39,124 @@ function pieceSelect(slot, value, { includeInherit = false, label }) {
 }
 
 function renderLoadout() {
-  const colors = $("#colors");
-  colors.replaceChildren();
-  for (const ch of ["primary", "secondary"]) {
-    const hex = el("span", { class: "hex" }, profile.colors[ch]);
+  $("#colors").replaceChildren(...["primary", "secondary"].map((ch) => {
     const input = el("input", { type: "color", id: `c-${ch}`, value: profile.colors[ch].toLowerCase() });
-    input.addEventListener("input", () => { profile.colors[ch] = input.value.toUpperCase(); hex.textContent = profile.colors[ch]; });
-    colors.append(el("div", { class: "row" }, el("label", { for: `c-${ch}` }, `${ch[0].toUpperCase()}${ch.slice(1)} color`),
-      el("div", {}, input, hex)));
-  }
-  const slots = $("#slots");
-  slots.replaceChildren();
-  for (const [slot, label] of Object.entries(catalog.slots)) {
+    input.addEventListener("input", () => { profile.colors[ch] = input.value.toUpperCase(); save(); });
+    return el("div", { class: "row" }, el("label", { for: input.id }, `${ch[0].toUpperCase()}${ch.slice(1)} color`), input);
+  }));
+  $("#slots").replaceChildren(...Object.entries(catalog.slots).map(([slot, label]) => {
     const sel = pieceSelect(slot, profile.armor[slot], { label });
     sel.id = `s-${slot}`;
-    sel.addEventListener("change", () => { profile.armor[slot] = sel.value; renderGames(); refreshStatus(); });
-    slots.append(el("div", { class: "row" }, el("label", { for: sel.id }, label), sel));
-  }
-}
-
-function renderGames() {
-  const root = $("#games");
-  root.replaceChildren();
-  for (const [gid, g] of Object.entries(catalog.games)) {
-    const on = profile.campaign.games.includes(gid);
-    const toggle = el("input", { type: "checkbox", id: `camp-${gid}` });
-    toggle.checked = on;
-    toggle.addEventListener("change", () => {
-      const set = new Set(profile.campaign.games);
-      toggle.checked ? set.add(gid) : set.delete(gid);
-      profile.campaign.games = Object.keys(catalog.games).filter((x) => set.has(x));
-      renderGames(); refreshStatus();
-    });
-    const card = el("article", { class: `game${on ? "" : " off"}` },
-      el("div", { class: "head" }, el("h3", {}, g.name), el("label", { class: "toggle", for: toggle.id }, toggle, "Build")));
+    sel.addEventListener("change", () => { profile.armor[slot] = sel.value; save(); });
+    return el("div", { class: "row" }, el("label", { for: sel.id }, label), sel);
+  }));
+  $("#games").replaceChildren(...Object.entries(catalog.games).map(([gid, g]) => {
     const ov = profile.overrides[gid] || {};
-    for (const [slot, label] of Object.entries(catalog.slots)) {
-      const effective = ov[slot] ?? profile.armor[slot];
-      const sel = pieceSelect(slot, ov[slot] ?? "", { includeInherit: true, label: `${g.name} ${label}` });
+    return el("div", { class: "game" }, el("h3", {}, g.name), ...Object.entries(catalog.slots).map(([slot, label]) => {
+      const sel = pieceSelect(slot, ov[slot] ?? "", { inherit: true, label: `${g.name} ${label}` });
       sel.addEventListener("change", () => {
         const o = (profile.overrides[gid] ||= {});
         if (sel.value) o[slot] = sel.value; else delete o[slot];
-        renderGames(); refreshStatus();
+        save();
       });
-      const p = pieceName(effective);
-      card.append(el("div", { class: "line" },
-        el("span", { class: "slot" }, label),
-        sel,
-        el("span", { class: "from" }, p ? `${p.name} · from ${p.game}` : `${g.name}'s own`)));
-    }
-    if (g.verify) card.append(el("p", { class: "verify" }, g.verify));
-    root.append(card);
-  }
+      return el("div", { class: "line" }, el("span", {}, label), sel);
+    }));
+  }));
 }
 
-async function refreshStatus() {
-  const seq = ++statusSeq;
-  try {
-    const { models } = await api("/api/status", profile);
-    if (seq !== statusSeq) return;
-    $("#models").replaceChildren(...models.map((m) =>
-      el("li", { class: m.ready ? "ok" : "missing", title: m.ready ? "extracted" : "not extracted yet" },
-        `${catalog.games[m.game].name}: ${m.model}`)));
-  } catch (e) { say(`Error: ${e.message}`); }
+function gameNote(gid) {
+  const g = catalog.games[gid];
+  if (!env.windows) return ["bad", "Applying needs Windows"];
+  if (!env.kits[gid]) return ["bad", `Needs the free ${g.tools_name} (Steam › Library › Tools)`];
+  if (gid === "halo1") return ["bad", "Halo CE's tools can't be automated yet; skipped"];
+  if (!env.armorytool) return ["bad", "ArmoryTool.exe is missing from the download"];
+  return ["ok", "Ready"];
 }
 
-function showResult(r) {
-  const box = $("#result");
+function renderGames() {
+  $("#gamelist").replaceChildren(...Object.entries(catalog.games).map(([gid, g]) => {
+    const box = el("input", { type: "checkbox", id: `camp-${gid}`, "aria-label": `Apply to ${g.name}` });
+    box.checked = profile.campaign.games.includes(gid);
+    box.addEventListener("change", () => {
+      const set = new Set(profile.campaign.games);
+      box.checked ? set.add(gid) : set.delete(gid);
+      profile.campaign.games = Object.keys(catalog.games).filter((x) => set.has(x));
+      save();
+    });
+    const [cls, text] = gameNote(gid);
+    return el("li", {}, box, el("label", { class: "name", for: box.id }, g.name), el("span", { class: `note ${cls}` }, text));
+  }));
+  const mcc = env.mcc ? "" : "Couldn't find Halo: The Master Chief Collection. Set its folder under Settings.";
+  say(mcc);
+  $("#paths").replaceChildren(
+    pathRow("mcc", "MCC folder", env.mcc),
+    ...Object.entries(catalog.games).map(([gid, g]) => pathRow(gid, g.tools_name, env.kits[gid])));
+}
+
+function pathRow(key, label, value) {
+  const input = el("input", { id: `p-${key}`, value: value || "", placeholder: "Not found" });
+  return el("div", { class: "row" }, el("label", { for: input.id }, label), input);
+}
+
+function showReport(kind, r) {
+  if (!r) return;
   const items = [];
-  if (r.built.length) items.push(el("p", {}, `Ready to install: ${r.built.map((g) => catalog.games[g].name).join(", ")}. `,
-    "Each game folder's NOTES.md has the steps."));
-  if (r.extract.length) {
-    items.push(el("p", {}, "Extract these first, then build again:"));
-    items.push(el("ul", {}, ...r.extract.map((l) => el("li", {}, l.replace(/\*\*/g, "").replace(/`/g, "")))));
+  if (kind === "restore") {
+    items.push(el("li", {}, Object.keys(r).length ? `Restored: ${Object.entries(r).map(([g, n]) => `${catalog.games[g].name} (${n} maps)`).join(", ")}` : "Nothing to restore."));
+  } else {
+    for (const [g, maps] of Object.entries(r.installed)) items.push(el("li", {}, `${catalog.games[g].name}: installed ${maps.length} levels`));
+    for (const [g, why] of Object.entries(r.skipped)) items.push(el("li", {}, `${catalog.games[g].name}: skipped — ${why}`));
+    for (const [g, why] of Object.entries(r.failed)) items.push(el("li", { class: "bad" }, `${catalog.games[g].name}: failed — ${why}`));
+    for (const d of r.dropped) items.push(el("li", {}, `Left off: ${d}`));
   }
-  for (const [g, e] of Object.entries(r.errors)) items.push(el("p", { class: "verify" }, `${catalog.games[g].name}: ${e}`));
-  box.replaceChildren(el("h2", {}, "Build"), el("p", { class: "hint" }, "Output: ", el("code", {}, r.out_dir)), ...items);
-  box.hidden = false;
+  $("#jobstate").after(el("ul", { class: "summary" }, ...items));
+}
+
+async function poll() {
+  if (polling) return;
+  polling = true;
+  try {
+    for (;;) {
+      const j = await api(`/api/job?since=${logSeen}`);
+      if (j.lines.length) {
+        const log = $("#log");
+        log.textContent += j.lines.join("\n") + "\n";
+        log.scrollTop = log.scrollHeight;
+        logSeen = j.total;
+      }
+      const busy = j.state === "running";
+      $("#apply").disabled = $("#restore").disabled = busy;
+      $("#jobstate").textContent = busy ? (j.kind === "restore" ? "Restoring…" : "Working… you can leave this open.")
+        : j.state === "done" ? (j.kind === "restore" ? "Originals restored." : "Done. Start MCC with mods (EAC off).")
+        : j.state === "error" ? "Stopped with an error (see below)." : "";
+      if (!busy) { document.querySelectorAll(".summary").forEach((n) => n.remove()); showReport(j.kind, j.report); break; }
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+  } finally { polling = false; }
+}
+
+async function start(path, body) {
+  $("#progress").hidden = false;
+  $("#log").textContent = "";
+  logSeen = 0;
+  try { await api(path, body); poll(); } catch (e) { say(`Error: ${e.message}`); }
 }
 
 async function init() {
-  [catalog, profile] = await Promise.all([api("/api/catalog"), api("/api/profile")]);
-  $("#name").value = profile.name;
-  $("#name").addEventListener("input", (e) => { profile.name = e.target.value; });
-  $("#save").addEventListener("click", async () => {
-    try { say(`Saved to ${(await api("/api/profile", profile)).saved}`); } catch (e) { say(`Error: ${e.message}`); }
-  });
-  $("#build").addEventListener("click", async () => {
-    say("Building…");
-    try { const r = await api("/api/build", profile); showResult(r); say(""); refreshStatus(); }
-    catch (e) { say(`Error: ${e.message}`); }
-  });
+  [catalog, profile, env] = await Promise.all([api("/api/catalog"), api("/api/profile"), api("/api/env")]);
   renderLoadout();
   renderGames();
-  refreshStatus();
+  $("#apply").addEventListener("click", () => start("/api/apply", profile));
+  $("#restore").addEventListener("click", () => {
+    if (confirm("Put MCC's original campaign maps back?")) start("/api/restore", {});
+  });
+  $("#savepaths").addEventListener("click", async () => {
+    const kits = {};
+    for (const gid of Object.keys(catalog.games)) kits[gid] = $(`#p-${gid}`).value.trim();
+    try { env = { ...env, ...(await api("/api/settings", { mcc: $("#p-mcc").value.trim(), kits })) }; renderGames(); say("Folders saved."); }
+    catch (e) { say(`Error: ${e.message}`); }
+  });
+  const j = await api("/api/job");
+  if (j.state === "running") { $("#progress").hidden = false; poll(); }
 }
 init().catch((e) => say(`Error: ${e.message}`));
