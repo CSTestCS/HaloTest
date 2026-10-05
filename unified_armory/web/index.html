@@ -8,42 +8,48 @@
 </head>
 <body>
 <header class="top">
-  <h1>Unified Armory</h1>
-  <p class="sub">Wear armor from any Halo game in every Master Chief Collection campaign.</p>
+  <h1>Unified Armory installer</h1>
+  <p class="sub">Installs the mod into Halo: The Master Chief Collection. You choose your armor in the game itself.</p>
 </header>
 <p id="status" role="status"></p>
 <main>
-  <section class="panel" id="loadout">
-    <h2><span class="step">1</span> Pick your armor</h2>
-    <p class="hint">Every piece is the real model from its game.</p>
-    <div id="colors"></div>
-    <div id="slots"></div>
-    <details id="pergame">
-      <summary>Different armor for a specific game</summary>
-      <div id="games"></div>
+  <section class="panel">
+    <h2><span class="step">1</span> Campaigns</h2>
+    <p class="hint">Each checked campaign gets every armor piece from every game you have Mod Tools for.
+      Mod Tools are free in Steam: Library › Tools.</p>
+    <ul id="gamelist"></ul>
+    <details id="settings">
+      <summary>Settings</summary>
+      <p class="hint">Only needed if a folder wasn't found automatically.</p>
+      <div id="paths"></div>
+      <button id="savepaths">Save folders</button>
     </details>
   </section>
 
-  <section class="panel" id="applypanel">
-    <h2><span class="step">2</span> Apply to your games</h2>
-    <p class="hint">Unified Armory adds your armor to each campaign below and installs it into MCC. Your original maps are backed up first.</p>
-    <ul id="gamelist"></ul>
+  <section class="panel">
+    <h2><span class="step">2</span> Install</h2>
+    <p class="hint">Builds the armor pack and installs the mod. The first time takes a few hours: every campaign level
+      is rebuilt. You only do this once.</p>
     <div class="buttons">
-      <button id="apply" class="primary big">Apply to my games</button>
-      <button id="restore">Restore original maps</button>
+      <button id="install" class="primary big">Install Unified Armory</button>
+      <button id="uninstall">Uninstall</button>
     </div>
-    <p class="hint small">This takes a while the first time: each campaign's levels are rebuilt. Then start MCC and choose
-      <strong>Play with mods (EAC off)</strong>.</p>
+    <p id="installed" class="hint small"></p>
     <div id="progress" hidden>
       <p id="jobstate"></p>
       <pre id="log" tabindex="0" aria-label="Progress log"></pre>
     </div>
-    <details id="settings">
-      <summary>Settings</summary>
-      <p class="hint">Only needed if something wasn't found automatically.</p>
-      <div id="paths"></div>
-      <button id="savepaths">Save folders</button>
-    </details>
+  </section>
+
+  <section class="panel wide">
+    <h2><span class="step">3</span> Play</h2>
+    <ol class="play">
+      <li>Start Halo: MCC and choose <strong>Play with mods (EAC off)</strong>.</li>
+      <li>In the main menu, press <kbd>F8</kbd> and pick any helmet, chest, shoulders and more, from any game.</li>
+      <li>Start any campaign mission. Your armor is on. Press <kbd>F8</kbd> in a mission to change it live.</li>
+    </ol>
+    <p class="hint small">The mod doesn't change MCC's own files. Uninstall (or deleting <code>version.dll</code> from MCC's
+      <code>mcc\binaries\win64</code> folder) puts everything back.</p>
   </section>
 </main>
 <script src="app.js"></script>

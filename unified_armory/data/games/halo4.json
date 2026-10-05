@@ -757,7 +757,12 @@
       "levels\\solo\\m80_delta\\m80_delta",
       "levels\\solo\\m90_sacrifice\\m90_sacrifice"
     ],
-    "build_command": "tool.exe build-cache-file {scenario}"
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "script": {
+      "player": "(player0)",
+      "file": "unified_armory.hsc",
+      "_verify": "The mission script is attached through the scenario's script source files and compiled by tool when the level is built."
+    }
   },
   "_verify": "Halo 4 is the least certain route. Its kit imports GR2, made from FBX by `tool fbx-to-gr2`, which also wants a JSON sidecar describing the model. That sidecar isn't generated here; the Foundry Blender add-on can produce the FBX+JSON pair. The tag paths and region names are best guesses."
 }

@@ -32,7 +32,11 @@ button.primary { background: var(--accent); color: var(--accent-ink); border-col
 button.big { padding: 10px 18px; font-weight: 600; }
 .buttons { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 #status { margin: 0; padding: 0 20px; min-height: 1.5em; color: var(--muted); }
-main { display: grid; grid-template-columns: minmax(300px, 420px) 1fr; gap: 16px; padding: 12px 20px 32px; align-items: start; }
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 12px 20px 32px; align-items: start; }
+.wide { grid-column: 1 / -1; }
+.play { margin: 4px 0 8px; padding-left: 20px; line-height: 1.8; }
+kbd { font: 12px ui-monospace, Menlo, Consolas, monospace; padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--tag); }
+code { font: 12px ui-monospace, Menlo, Consolas, monospace; background: var(--tag); padding: 1px 4px; border-radius: 4px; }
 @media (max-width: 820px) { main { grid-template-columns: 1fr; padding: 12px 16px 24px; } .top { padding: 12px 16px; } #status { padding: 0 16px; } }
 .panel, .game { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
 .row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }

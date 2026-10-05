@@ -1,35 +1,28 @@
 # Unified Armory
 
-Wear armor from **any** Halo game in **every** Halo: The Master Chief Collection campaign. For example: Reach's Gungnir helmet and Halo 3's EOD chest on the Chief in Halo 2, ODST and Halo 4.
+A mod for Halo: The Master Chief Collection: wear armor from **any** Halo game in **every** campaign, chosen **in-game**.
 
-These are the real models from each game, fitted to every campaign's character.
+Press **F8** in MCC's main menu, pick, say, Reach's Gungnir helmet and Halo 3's EOD chest, then start any campaign mission in Halo 2, Halo 3, ODST, Reach or Halo 4 and you're wearing them. These are the real models from each game, fitted to every campaign's character. Change your mind mid-mission? Press F8 again; it updates live.
 
-![Unified Armory](docs/editor.png)
-
-## Install
+## Install (once)
 
 1. **Download** `UnifiedArmory.zip` from the [Releases page](../../releases) and unzip it anywhere.
-2. **Get the free Mod Tools** in Steam: open **Library**, switch the dropdown to **Tools**, and install the Mod Tools for:
-   - each campaign you want to change, and
-   - each game your armor comes from (a Reach helmet needs *Halo: Reach Mod Tools*).
+2. **Get the free Mod Tools** in Steam: open **Library**, switch the dropdown to **Tools**, and install the Mod Tools for the games you want. Every game you have Mod Tools for adds both its campaign and its armor to the mod. Halo 4 also needs [Blender](https://www.blender.org/download/) (free).
+3. **Double-click `UnifiedArmory.exe`** and click **Install Unified Armory**. It finds MCC and the Mod Tools by itself, builds the armor pack and installs the mod. The first install rebuilds every campaign level, which takes a few hours. You only do this once.
 
-   Halo 4 also needs [Blender](https://www.blender.org/download/) (free).
-3. **Double-click `UnifiedArmory.exe`.** It opens in your browser and finds MCC and the Mod Tools by itself.
+![Installer](docs/installer.png)
 
-## Use
+## Play
 
-1. **Pick your armor:** a helmet, chest, shoulders and so on, from any game, plus your colors.
-2. Click **Apply to my games**. The first time takes a while (up to a few hours for every campaign), because each campaign's levels are rebuilt with your armor. You can leave it running.
-3. Start MCC and choose **Play with mods (EAC off)**.
-
-Change your mind? Pick new armor and click **Apply** again.
-**Undo everything:** click **Restore original maps** (or use Steam → MCC → Properties → Installed Files → Verify integrity).
+1. Start Halo MCC and choose **Play with mods (EAC off)**.
+2. In the main menu, press **F8** and pick your helmet, chest, shoulders, wrists, utility and knees from any game. Use the **All games** tab, or a game's own tab to give one campaign a different look. Picks are saved.
+3. Start any campaign mission.
 
 ## Good to know
 
-- **Campaigns only.** Online multiplayer and matchmaking use MCC's own armor menus, which mods can't change.
-- **Your original maps are backed up** before anything is replaced.
-- **Halo CE** campaigns can't be changed automatically yet, and CE armor pieces need a one-time manual step. The app tells you when something is skipped and why.
-- **Untested on real game files.** This hasn't been run against the real Mod Tools or MCC yet, so the first runs may hit problems with a particular game. If one fails, the app shows the step that failed. Please [open an issue](../../issues) with that message.
+- **MCC's own files are never changed.** Uninstall from the installer, or delete `version.dll` and the `UnifiedArmory` folder from `<MCC>\mcc\binaries\win64`.
+- **Campaigns only, with mods on (EAC off).** Online multiplayer uses MCC's own armor menus, which mods can't change. The mod switches itself off when Easy Anti-Cheat is running.
+- **Not yet supported:** Halo CE campaigns, armor colors in the panel, co-op partners' armor, and cutscenes (which may show the original armor).
+- **Untested on real game files.** The pieces that could be tested without MCC have been: armor porting, the installer, and the mod running against a stand-in MCC. It hasn't been run against the real Mod Tools or MCC yet, so expect the first runs to need fixes. If something doesn't work, send `<MCC>\mcc\binaries\win64\UnifiedArmory\runtime.log` (and the installer's log) in an [issue](../../issues).
 
-Technical details, the command line and the manual Halo CE route are in [docs/ADVANCED.md](docs/ADVANCED.md).
+How it works, building from source and editing the armor data: [docs/ADVANCED.md](docs/ADVANCED.md).

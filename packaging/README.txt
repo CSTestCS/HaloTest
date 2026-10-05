@@ -1,21 +1,25 @@
 UNIFIED ARMORY
-Wear armor from any Halo game in every Master Chief Collection campaign.
+Wear armor from any Halo game in every Master Chief Collection campaign,
+chosen in-game from the main menu.
 
-1. Install the free Mod Tools for the games you want, in Steam:
-   Library > (dropdown) Tools > "Halo 3 Mod Tools", "Halo: Reach Mod Tools", etc.
-   Install the Mod Tools for the games your armor comes FROM too
-   (e.g. a Reach helmet needs the Reach Mod Tools).
+INSTALL (once)
+1. In Steam, install the free Mod Tools for the games you want
+   (Library > dropdown > Tools: "Halo 3 Mod Tools", "Halo: Reach Mod Tools", ...).
+   Every game you have Mod Tools for adds its campaign AND its armor to the pack.
    Halo 4 also needs Blender (free, blender.org).
+2. Double-click UnifiedArmory.exe (it opens in your browser), then click
+   "Install Unified Armory". The first install rebuilds every campaign level
+   with the armor pack, which takes a few hours. You only do this once.
 
-2. Double-click UnifiedArmory.exe. It opens in your web browser.
-   Keep the black window open while you use it.
+PLAY
+1. Start Halo MCC and choose "Play with mods (EAC off)".
+2. In the main menu press F8 and pick your helmet, chest, shoulders and more,
+   from any game. Choices are saved.
+3. Start any campaign mission: your armor is on. Press F8 in a mission to change it live.
 
-3. Pick your armor, then click "Apply to my games".
-   The first run rebuilds every campaign level you selected, which can take a few hours.
+UNINSTALL
+Run UnifiedArmory.exe and click Uninstall, or delete version.dll and the
+UnifiedArmory folder from <MCC>\mcc\binaries\win64. MCC's own files are never changed.
 
-4. Start Halo MCC and choose "Play with mods (EAC off)".
-
-To undo: open UnifiedArmory.exe and click "Restore original maps"
-(or use Steam > MCC > Properties > Installed Files > Verify integrity).
-
-Halo CE campaigns can't be modified automatically yet; see docs/ADVANCED.md on the project page.
+Not yet supported: Halo CE campaigns. If something doesn't work, the mod writes
+<MCC>\mcc\binaries\win64\UnifiedArmory\runtime.log. Please include it when reporting.

@@ -687,7 +687,12 @@
       "levels\\solo\\m70_a\\m70_a",
       "levels\\solo\\m70_bonus\\m70_bonus"
     ],
-    "build_command": "tool.exe build-cache-file {scenario}"
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "script": {
+      "player": "(player0)",
+      "file": "unified_armory.hsc",
+      "_verify": "The mission script is attached through the scenario's script source files and compiled by tool when the level is built."
+    }
   },
   "_verify": "Reach's campaign normally picks armor permutations from your MCC profile. The ported model has one permutation per region, so the profile's picks fall back to it. The region names, the shader template path and whether the Reach kit imports JMS through `tool render` all need checking in HREK."
 }

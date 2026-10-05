@@ -5,3 +5,4 @@ armory_cache/
 armory_profile.json
 tools/ArmoryTool/bin/
 tools/ArmoryTool/obj/
+build/

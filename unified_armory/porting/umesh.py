@@ -97,7 +97,7 @@ class UMesh:
             out.triangles.append(Triangle(tuple(vs), mmap[t.material], t.region, t.permutation))
         return out
 
-    def append(self, other: "UMesh", region: str | None = None) -> None:
+    def append(self, other: "UMesh", region: str | None = None, permutation: str | None = None) -> None:
         """Merge another mesh that is already bound to this mesh's skeleton."""
         if [n.name for n in other.nodes] != [n.name for n in self.nodes]:
             raise ValueError("cannot merge meshes bound to different skeletons")
@@ -111,8 +111,8 @@ class UMesh:
             mmap[i] = existing
         self.vertices.extend(other.vertices)
         for t in other.triangles:
-            self.triangles.append(Triangle(tuple(v + voff for v in t.v), mmap[t.material],
-                                           region or t.region, "default" if region else t.permutation))
+            self.triangles.append(Triangle(tuple(v + voff for v in t.v), mmap[t.material], region or t.region,
+                                           permutation or ("default" if region else t.permutation)))
 
     # --- io ----------------------------------------------------------------
     def to_json(self) -> dict:

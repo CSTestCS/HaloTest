@@ -28,6 +28,7 @@ DEFAULT_FIELDS = {
     "shader_parameters": "parameters",
     "shader_parameter_name": "parameter name",
     "shader_parameter_bitmap": "bitmap",
+    "scenario_source_files": "source files",
 }
 
 
@@ -44,7 +45,8 @@ def _stem(tag: str) -> str:
     return tag.replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
 
 
-def write_target(catalog, profile: dict, target_id: str, asm: Assembly, out_dir: Path) -> dict:
+def write_target(catalog, profile: dict | None, target_id: str, asm: Assembly, out_dir: Path) -> dict:
+    """profile=None writes a map pack target (no baked colors; adds the runtime mission script)."""
     game = catalog.game(target_id)
     t = game["target"]
     gdir = Path(out_dir) / target_id
@@ -92,10 +94,23 @@ def write_target(catalog, profile: dict, target_id: str, asm: Assembly, out_dir:
     fmt = {"render_model_tag": t["render_model_tag"], "data_dir": t["data_dir"], "bitmap_dir": t["bitmap_dir"],
            "data_root": "%EK%\\data", "tools": "%~dp0..\\tools"}
     post = [{**h, "value": h["value"].format(**fmt)} for h in t["hookup"]]
-    for channel, index in t["change_colors"]["channels"].items():
-        for biped in t["change_colors"]["bipeds"]:
-            post.append({"op": "set_change_color", "tag": biped, "index": index, "channel": channel,
-                         "color": hex_to_unit_rgb(profile["colors"][channel])})
+    if profile is not None:
+        for channel, index in t["change_colors"]["channels"].items():
+            for biped in t["change_colors"]["bipeds"]:
+                post.append({"op": "set_change_color", "tag": biped, "index": index, "channel": channel,
+                             "color": hex_to_unit_rgb(profile["colors"][channel])})
+    else:
+        from . import pack
+        script = t["script"]
+        text = pack.generate_script(catalog, target_id, asm.manifest)
+        for scenario in t["scenarios"]:
+            src = pack.script_source(scenario, script["file"])
+            dst = data / ospath(src)
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            dst.write_text(text)
+            post.append({"op": "add_script", "tag": pack.scenario_tag(scenario), "source": src})
+        if script.get("_verify"):
+            warnings.append(script["_verify"])
     if game.get("_verify"):
         warnings.append(game["_verify"])
 
@@ -111,8 +126,9 @@ def write_target(catalog, profile: dict, target_id: str, asm: Assembly, out_dir:
         "import_templates": list(t["import_commands"]),
         "maps": [s.replace("\\", "/").rsplit("/", 1)[-1] + ".map" for s in t["scenarios"]],
         "build_commands": [t["build_command"].format(scenario=s) for s in t["scenarios"]],
-        "pieces": {SLOTS[s]: catalog.piece(uid)["name"] + f" ({catalog.game(catalog.piece(uid)['game'])['name']})"
-                   for s, uid in asm.pieces.items()},
+        "pieces": ({SLOTS[s]: catalog.piece(uid)["name"] + f" ({catalog.game(catalog.piece(uid)['game'])['name']})"
+                    for s, uid in asm.pieces.items()} if profile is not None
+                   else {SLOTS[s]: f"{len(v) - 1} pieces" for s, v in asm.manifest.items()}),
         "stats": {"vertices": len(asm.mesh.vertices), "triangles": len(asm.mesh.triangles),
                   "materials": len(asm.mesh.materials), "imported_materials": len(asm.imported)},
         "warnings": warnings,
@@ -127,6 +143,8 @@ def _describe(op: dict) -> str:
         return f"Duplicate `{op['template']}` as `{op['to']}` and set {maps}."
     if op["op"] == "set_reference":
         return f"In `{op['tag']}`, set **{op['field']}** to `{op['value']}`."
+    if op["op"] == "add_script":
+        return f"In `{op['tag']}`, add `{op['source']}` to the script source files."
     if op["op"] == "set_change_color":
         rgb = ", ".join(f"{c:.3f}" for c in op["color"])
         return f"In `{op['tag']}`, set change color {op['index']} ({op['channel']}) lower and upper bounds to ({rgb})."

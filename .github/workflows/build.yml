@@ -20,8 +20,13 @@ jobs:
           python-version: "3.12"
       - name: Validate data
         run: python -m unified_armory validate
-      - name: Tests
+      - name: Python tests
         run: PYTHONPATH=. python -m unittest discover -s tests -v
+      - name: Runtime core tests
+        run: |
+          cmake -S tools/runtime -B build/runtime -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-Wall -Wextra -fsanitize=address,undefined"
+          cmake --build build/runtime -j
+          ctest --test-dir build/runtime --output-on-failure
 
   package:
     needs: test
@@ -31,6 +36,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Build runtime (version.dll)
+        run: |
+          cmake -S tools/runtime -B build/runtime -A x64
+          cmake --build build/runtime --config Release
+      - name: Runtime tests (core + version.dll as a stand-in MCC)
+        shell: bash
+        run: |
+          build/runtime/Release/core_tests.exe
+          WINE= tools/runtime/tests/run_win_harness.sh build/runtime/Release
       - name: Build ArmoryTool
         run: dotnet build tools/ArmoryTool -c Release
       - name: Build UnifiedArmory.exe
@@ -50,6 +64,7 @@ jobs:
           New-Item -ItemType Directory -Force release/UnifiedArmory | Out-Null
           Copy-Item dist/UnifiedArmory.exe release/UnifiedArmory/
           Copy-Item tools/ArmoryTool/bin/Release/net48/ArmoryTool.exe release/UnifiedArmory/
+          Copy-Item build/runtime/Release/version.dll release/UnifiedArmory/
           Copy-Item packaging/README.txt release/UnifiedArmory/
           Compress-Archive -Path release/UnifiedArmory -DestinationPath release/UnifiedArmory.zip
       - uses: actions/upload-artifact@v4

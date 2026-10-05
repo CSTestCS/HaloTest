@@ -1,14 +1,17 @@
-"""One-click apply: find MCC and the Mod Tools, then extract, port, import, compile and install.
+"""Build the Unified Armory map pack and install the runtime mod.
 
-Everything the build scripts do by hand happens here in order, per game. Games
-whose Mod Tools aren't installed are skipped with a clear reason; pieces whose
-source game isn't available are left off rather than blocking the rest. Original
-campaign maps are backed up once (never overwritten by a modded copy) and can
-be restored with restore().
+Finds MCC and each game's Mod Tools, extracts every piece's source model, builds
+each campaign's player model with all pieces as selectable permutations plus the
+runtime mission script, compiles the campaign levels, and puts the result in
+<MCC>/mcc/binaries/win64/UnifiedArmory with the runtime DLL beside it. MCC's own
+files are never modified: the runtime redirects map loads to the pack, so deleting
+version.dll (or the UnifiedArmory folder) returns the game to normal.
+
+Games whose Mod Tools aren't installed are skipped with a reason; pieces whose
+source game isn't available are left out of the pack rather than blocking the rest.
 """
 from __future__ import annotations
 
-import copy
 import json
 import os
 import re
@@ -19,13 +22,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
-from .catalog import DEFAULT
-from .export import TOOLS_DIR, export, needed_models
-from .porting.cache import is_extracted, model_dir
-from .profile import loadout_for
+from . import pack
+from .backends import write_target
+from .export import TOOLS_DIR
+from .porting.assemble import assemble_pack
+from .porting.cache import Loader, is_extracted, model_dir
 
 MCC_FOLDER = "Halo The Master Chief Collection"
-BACKUP_FOLDER = "UnifiedArmoryBackup"
+BINARIES = ("mcc", "binaries", "win64")
+MOD_FOLDER = "UnifiedArmory"
+RUNTIME_DLL = "version.dll"
 
 Log = Callable[[str], None]
 Runner = Callable[[str, Path], int]
@@ -80,12 +86,13 @@ class Environment:
     kits: dict[str, Path] = field(default_factory=dict)
     armorytool: Path | None = None
     blender: Path | None = None
+    runtime: Path | None = None
 
     def to_json(self) -> dict:
-        return {"mcc": str(self.mcc) if self.mcc else None,
-                "kits": {g: str(p) for g, p in self.kits.items()},
-                "armorytool": str(self.armorytool) if self.armorytool else None,
-                "blender": str(self.blender) if self.blender else None}
+        s = lambda p: str(p) if p else None
+        return {"mcc": s(self.mcc), "kits": {g: str(p) for g, p in self.kits.items()},
+                "armorytool": s(self.armorytool), "blender": s(self.blender), "runtime": s(self.runtime),
+                "installed": bool(self.mcc and (mod_dir(self.mcc) / "manifest.json").is_file())}
 
 
 def valid_kit(path: Path, game: dict) -> bool:
@@ -106,6 +113,17 @@ def find_armorytool() -> Path | None:
     return next((c for c in candidates if c.is_file()), None)
 
 
+def find_runtime() -> Path | None:
+    """The runtime proxy DLL: bundled next to the builder, or a local CMake build."""
+    candidates = [Path(sys.executable).parent / RUNTIME_DLL]
+    candidates += sorted((TOOLS_DIR / "runtime").glob(f"**/{RUNTIME_DLL}"))
+    return next((c for c in candidates if c.is_file()), None)
+
+
+def mod_dir(mcc: Path) -> Path:
+    return mcc.joinpath(*BINARIES, MOD_FOLDER)
+
+
 def find_blender() -> Path | None:
     if os.environ.get("BLENDER") and Path(os.environ["BLENDER"]).is_file():
         return Path(os.environ["BLENDER"])
@@ -120,7 +138,7 @@ def detect(catalog, settings: dict | None = None, roots: list[Path] | None = Non
     """Find MCC and each game's Mod Tools in every Steam library. `settings` may pin paths:
     {"mcc": "...", "kits": {"halo3": "..."}}."""
     settings = settings or {}
-    env = Environment(armorytool=find_armorytool(), blender=find_blender())
+    env = Environment(armorytool=find_armorytool(), blender=find_blender(), runtime=find_runtime())
     commons = [lib / "steamapps" / "common" for root in (roots if roots is not None else steam_roots())
                for lib in steam_libraries(root)]
     if settings.get("mcc") and Path(settings["mcc"]).is_dir():
@@ -157,10 +175,11 @@ def _q(p) -> str:
 
 @dataclass
 class Report:
-    installed: dict = field(default_factory=dict)  # game -> list of maps installed
-    skipped: dict = field(default_factory=dict)    # game -> reason
-    failed: dict = field(default_factory=dict)     # game -> reason
-    dropped: list = field(default_factory=list)    # pieces left off, with reasons
+    built: dict = field(default_factory=dict)    # game -> {"maps": n, "pieces": n}
+    skipped: dict = field(default_factory=dict)  # game -> reason
+    failed: dict = field(default_factory=dict)   # game -> reason
+    left_out: list = field(default_factory=list) # pieces not in the pack, with reasons
+    installed_to: str | None = None
 
     def to_json(self) -> dict:
         return self.__dict__
@@ -170,153 +189,143 @@ class StepFailed(Exception):
     pass
 
 
-def apply(catalog, profile: dict, env: Environment, cache: Path, out_dir: Path,
-          log: Log = print, runner: Runner | None = None, install_maps: bool = True) -> Report:
-    if sys.platform != "win32" and runner is None:
-        raise RuntimeError("Applying to the game needs Windows (the Mod Tools are Windows programs).")
-    runner = runner or default_runner(log)
-    cache, out_dir = Path(cache), Path(out_dir)
-    report = Report()
-    profile = copy.deepcopy(profile)
-    if not env.mcc and install_maps:
-        raise RuntimeError("Couldn't find Halo: The Master Chief Collection. Set its folder in Settings.")
+def _can_extract(catalog, env: Environment, gid: str, model: str) -> bool:
+    g = catalog.game(gid)
+    return bool("tag" in g["models"][model] and gid in env.kits and g.get("managedblam") and env.armorytool)
 
-    # 1. Which campaigns can we do at all?
-    targets = []
-    for gid in profile["campaign"]["games"]:
-        game = catalog.game(gid)
-        if gid not in env.kits:
-            report.skipped[gid] = f"{game['tools_name']} not installed (Steam > Library > Tools)"
-        elif not game.get("managedblam"):
-            report.skipped[gid] = "Halo CE's Mod Tools can't be automated; see docs/ADVANCED.md for the manual route"
-        elif not env.armorytool:
-            report.skipped[gid] = "ArmoryTool.exe not found next to UnifiedArmory.exe"
-        else:
-            targets.append(gid)
-    profile["campaign"]["games"] = targets
-    if not targets:
-        log("Nothing to do: no selected game has its Mod Tools installed.")
-        return report
 
-    # 2. Extract every source model we can; anything we can't is left off the loadout.
-    def can_extract(gid, model):
-        g = catalog.game(gid)
-        return "tag" in g["models"][model] and gid in env.kits and g.get("managedblam") and env.armorytool
-
+def extract_missing(catalog, models, env: Environment, cache: Path, work: Path, log: Log, runner: Runner) -> None:
     jobs: dict[str, list] = {}
-    for gid, model in sorted(needed_models(catalog, profile)):
-        if not is_extracted(cache, catalog.game(gid), model) and can_extract(gid, model):
+    for gid, model in sorted(models):
+        if not is_extracted(cache, catalog.game(gid), model) and _can_extract(catalog, env, gid, model):
             jobs.setdefault(gid, []).append({"tag": catalog.game(gid)["models"][model]["tag"],
                                              "out": str(model_dir(cache, gid, model).resolve())})
     for gid, job in jobs.items():
         game = catalog.game(gid)
-        log(f"Extracting {len(job)} model(s) from {game['name']}…")
-        jobfile = out_dir / "extract" / f"{gid}.json"
+        log(f"Reading {len(job)} model(s) from the {game['tools_name']}…")
+        jobfile = work / "extract" / f"{gid}.json"
         jobfile.parent.mkdir(parents=True, exist_ok=True)
         jobfile.write_text(json.dumps({"bitmap_command": game["bitmap_export"], "jobs": job}, indent=2))
         runner(f"{_q(env.armorytool)} extract {_q(env.kits[gid])} {_q(jobfile)}", env.kits[gid])
 
-    for gid in list(targets):
-        if not is_extracted(cache, catalog.game(gid), catalog.game(gid)["target"]["base_model"]):
-            report.failed[gid] = "couldn't read this game's player model from its Mod Tools (see the log)"
-            targets.remove(gid)
-        ov = profile["overrides"].setdefault(gid, {})
-        for slot, uid in loadout_for(profile, gid).items():
-            if uid == DEFAULT:
-                continue
-            piece = catalog.piece(uid)
-            src = catalog.game(piece["game"])
-            if not is_extracted(cache, src, piece["model"]):
-                ov[slot] = DEFAULT
-                why = (f"{src['tools_name']} not installed" if piece["game"] not in env.kits
-                       else "Halo CE pieces need the manual export in docs/ADVANCED.md" if not src.get("managedblam")
-                       else "its model couldn't be extracted")
-                entry = f"{piece['name']} ({src['name']}): {why}"
-                if entry not in report.dropped:
-                    report.dropped.append(entry)
-    profile["campaign"]["games"] = targets
-    for d in report.dropped:
-        log(f"Left off: {d}")
 
-    # 3. Port.
-    log("Porting armor…")
-    result = export(catalog, profile, out_dir, cache)
-    for gid, err in {**result["errors"], **{g: f"missing {m}" for g, m in result["waiting"].items()}}.items():
-        report.failed[gid] = err
+def import_and_compile(game: dict, plan: dict, kit: Path, gdir: Path, env: Environment, log: Log, runner: Runner) -> None:
+    shutil.copytree(gdir / "data", kit / "data", dirs_exist_ok=True)
+    t = game["target"]
+    fmt = {"render_model_tag": t["render_model_tag"], "data_dir": t["data_dir"], "bitmap_dir": t["bitmap_dir"],
+           "data_root": str(kit / "data"), "tools": str(TOOLS_DIR)}
+    cmds = [c.format(**fmt).replace("%BLENDER%", str(env.blender or "blender")) for c in plan["import_templates"]]
+    plan_path = gdir / "plan.json"
+    steps = [c for c in cmds if c.startswith("tool.exe bitmaps")]
+    steps.append(f"{_q(env.armorytool)} apply {_q(kit)} {_q(plan_path)} --stage pre")
+    steps += [c for c in cmds if not c.startswith("tool.exe bitmaps")]
+    steps.append(f"{_q(env.armorytool)} apply {_q(kit)} {_q(plan_path)} --stage post")
+    for step in steps:
+        if "gltf_to_fbx" in step and not env.blender:
+            raise StepFailed("Blender is needed for Halo 4 (blender.org) and wasn't found")
+        if runner(step, kit) != 0:
+            raise StepFailed(f"step failed: {step}")
+    log(f"Compiling {len(plan['build_commands'])} campaign levels (this takes a while)…")
+    for step in plan["build_commands"]:
+        if runner(step, kit) != 0:
+            raise StepFailed(f"level failed to compile: {step}")
 
-    # 4. Import, compile and install, one game at a time.
-    for gid, plan in result["built"].items():
+
+def build_pack(catalog, env: Environment, cache: Path, work: Path, games: list[str] | None = None,
+               include: set[str] | None = None, log: Log = print, runner: Runner | None = None) -> Report:
+    """Build the map pack for `games` (default: all) with every piece in `include` (default: all)
+    and install it, with the runtime DLL, into MCC's binaries folder."""
+    if sys.platform != "win32" and runner is None:
+        raise RuntimeError("Building the map pack needs Windows (the Mod Tools are Windows programs).")
+    if not env.mcc:
+        raise RuntimeError("Couldn't find Halo: The Master Chief Collection. Set its folder in Settings.")
+    runner = runner or default_runner(log)
+    cache, work = Path(cache), Path(work)
+    report = Report()
+
+    targets = []
+    for gid in games or [g["id"] for g in catalog.ordered_games()]:
+        game = catalog.game(gid)
+        if not game["target"].get("script"):
+            report.skipped[gid] = "Halo CE's Mod Tools can't be automated, so it isn't in the pack yet"
+        elif gid not in env.kits:
+            report.skipped[gid] = f"{game['tools_name']} not installed (Steam > Library > Tools)"
+        elif not env.armorytool:
+            report.skipped[gid] = "ArmoryTool.exe not found next to the builder"
+        else:
+            targets.append(gid)
+
+    needed = {(gid, catalog.game(gid)["target"]["base_model"]) for gid in targets}
+    for g in catalog.ordered_games():
+        for p in g["pieces"]:
+            if include is None or f"{g['id']}/{p['id']}" in include:
+                needed.add((g["id"], p["model"]))
+    extract_missing(catalog, needed, env, cache, work, log, runner)
+    for gid, model in sorted(needed):
+        if not is_extracted(cache, catalog.game(gid), model):
+            game = catalog.game(gid)
+            why = (f"{game['tools_name']} not installed" if gid not in env.kits
+                   else "Halo CE pieces need the manual export in docs/ADVANCED.md" if not game.get("managedblam")
+                   else "couldn't be read from the Mod Tools (see the log)")
+            report.left_out.append(f"{game['name']} pieces from {model}: {why}")
+
+    out_mod = mod_dir(env.mcc)
+    load = Loader(cache, catalog)
+    games_manifest = {}
+    if (out_mod / "manifest.json").is_file():  # keep games built earlier when rebuilding only some
+        games_manifest = json.loads((out_mod / "manifest.json").read_text()).get("games", {})
+    for gid in targets:
         game = catalog.game(gid)
         kit = env.kits[gid]
         try:
             log(f"── {game['name']} ──")
-            shutil.copytree(out_dir / gid / "data", kit / "data", dirs_exist_ok=True)
-            fmt = {"render_model_tag": game["target"]["render_model_tag"], "data_dir": game["target"]["data_dir"],
-                   "bitmap_dir": game["target"]["bitmap_dir"], "data_root": str(kit / "data"), "tools": str(TOOLS_DIR)}
-            cmds = [c.format(**fmt).replace("%BLENDER%", str(env.blender or "blender")) for c in plan["import_templates"]]
-            plan_path = out_dir / gid / "plan.json"
-            steps = [c for c in cmds if c.startswith("tool.exe bitmaps")]
-            steps.append(f"{_q(env.armorytool)} apply {_q(kit)} {_q(plan_path)} --stage pre")
-            steps += [c for c in cmds if not c.startswith("tool.exe bitmaps")]
-            steps.append(f"{_q(env.armorytool)} apply {_q(kit)} {_q(plan_path)} --stage post")
-            for step in steps:
-                if "gltf_to_fbx" in step and not env.blender:
-                    raise StepFailed("Blender is needed for Halo 4 (blender.org) and wasn't found")
-                if runner(step, kit) != 0:
-                    raise StepFailed(f"step failed: {step}")
-            log(f"Compiling {len(plan['build_commands'])} campaign levels (this takes a while)…")
-            for step in plan["build_commands"]:
-                if runner(step, kit) != 0:
-                    raise StepFailed(f"level failed to compile: {step}")
-            installed = install_built_maps(game, plan["maps"], kit, env.mcc, log) if install_maps else []
-            report.installed[gid] = installed
+            if not is_extracted(cache, game, game["target"]["base_model"]):
+                raise StepFailed("couldn't read this game's player model from its Mod Tools (see the log)")
+            asm = assemble_pack(catalog, gid, load, include)
+            gdir = work / gid
+            shutil.rmtree(gdir, ignore_errors=True)
+            gdir.mkdir(parents=True)
+            plan = write_target(catalog, None, gid, asm, work)
+            (gdir / "plan.json").write_text(json.dumps(plan, indent=2) + "\n")
+            import_and_compile(game, plan, kit, gdir, env, log, runner)
+            rels = pack.map_relpaths(game)
+            for rel, name in zip(rels, plan["maps"]):
+                built = kit / "maps" / name
+                if not built.is_file():
+                    raise StepFailed(f"{name} wasn't produced by the level build")
+                dst = out_mod / "maps" / Path(*rel.split("/"))
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(built, dst)
+            games_manifest[gid] = pack.manifest_entry(catalog, gid, asm.manifest, rels)
+            n = sum(len(v) - 1 for v in asm.manifest.values())
+            report.built[gid] = {"maps": len(rels), "pieces": n}
+            log(f"{game['name']}: {len(rels)} levels with {n} pieces added to the pack")
         except StepFailed as e:
             report.failed[gid] = str(e)
             log(f"{game['name']} failed: {e}")
+
+    if games_manifest:
+        out_mod.mkdir(parents=True, exist_ok=True)
+        (out_mod / "manifest.json").write_text(json.dumps(pack.manifest(catalog, games_manifest), indent=2))
+        if env.runtime:
+            shutil.copy2(env.runtime, out_mod.parent / RUNTIME_DLL)
+        else:
+            log("Note: version.dll (the runtime) wasn't found next to the builder; copy it into "
+                f"{out_mod.parent} yourself.")
+        report.installed_to = str(out_mod)
+        log(f"Installed to {out_mod}. Start MCC with mods (EAC off) and press F8 in the main menu.")
     return report
 
 
-# ------------------------------------------------------------------ maps
-
-def _mcc_maps(game: dict, mcc: Path) -> Path:
-    return mcc.joinpath(*game["mcc_maps"].split("\\"))
-
-
-def install_built_maps(game: dict, maps: list[str], kit: Path, mcc: Path, log: Log) -> list[str]:
-    dest = _mcc_maps(game, mcc)
-    backup = mcc / BACKUP_FOLDER / game["id"]
-    backup.mkdir(parents=True, exist_ok=True)
-    done = []
-    for name in maps:
-        built = kit / "maps" / name
-        if not built.is_file():
-            raise StepFailed(f"{name} wasn't produced by the level build")
-        original = dest / name
-        if original.is_file() and not (backup / name).is_file():
-            shutil.copy2(original, backup / name)  # back up the real original only once
-        dest.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(built, original)
-        done.append(name)
-    log(f"Installed {len(done)} {game['name']} maps (originals kept in {backup})")
-    return done
-
-
-def restore(catalog, mcc: Path, log: Log = print) -> dict[str, int]:
-    """Put every backed-up original map back and remove the backup."""
-    restored = {}
-    root = Path(mcc) / BACKUP_FOLDER
-    for game in catalog.ordered_games():
-        backup = root / game["id"]
-        if not backup.is_dir():
-            continue
-        dest = _mcc_maps(game, Path(mcc))
-        n = 0
-        for f in backup.glob("*.map"):
-            shutil.copy2(f, dest / f.name)
-            n += 1
-        shutil.rmtree(backup)
-        restored[game["id"]] = n
-        log(f"Restored {n} original {game['name']} maps")
-    if root.is_dir() and not any(root.iterdir()):
-        root.rmdir()
-    return restored
+def uninstall(mcc: Path, log: Log = print) -> bool:
+    """Remove the runtime and the pack. MCC's own files were never changed."""
+    removed = False
+    dll = mcc.joinpath(*BINARIES, RUNTIME_DLL)
+    if dll.is_file():
+        dll.unlink()
+        removed = True
+    if mod_dir(mcc).is_dir():
+        shutil.rmtree(mod_dir(mcc))
+        removed = True
+    log("Unified Armory removed." if removed else "Unified Armory wasn't installed.")
+    return removed

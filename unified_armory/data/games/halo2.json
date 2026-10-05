@@ -185,7 +185,12 @@
       "scenarios\\solo\\08a_deltacliffs\\08a_deltacliffs",
       "scenarios\\solo\\08b_deltacontrol\\08b_deltacontrol"
     ],
-    "build_command": "tool.exe build-cache-file {scenario}"
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "script": {
+      "player": "(unit (list_get (players) 0))",
+      "file": "unified_armory.hsc",
+      "_verify": "The mission script is attached through the scenario's script source files and compiled by tool when the level is built."
+    }
   },
   "_verify": "Halo 2 render models store geometry in sections. If extraction reports missing fields, add the H2EK names under dump_fields, or export masterchief to JMS and save it as model.jms in the cache's halo2\\masterchief folder."
 }

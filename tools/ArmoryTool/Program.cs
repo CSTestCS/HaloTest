@@ -273,6 +273,7 @@ internal static class Program
             case "clone_shader": return $"shader {op["to"]} (from {op["template"]})";
             case "set_reference": return $"{op["tag"]}: {op["field"]} = {op["value"]}";
             case "set_change_color": return $"{op["tag"]}: change color {op["index"]}";
+            case "add_script": return $"{op["tag"]}: script source {op["source"]}";
             default: return (string)op["op"];
         }
     }
@@ -285,6 +286,7 @@ internal static class Program
             case "clone_shader": CloneShader(op); break;
             case "set_reference": Edit((string)op["tag"], t => SetPath(Find(FieldsOf(t), (string)op["field"], IsReference), (string)op["value"])); break;
             case "set_change_color": Edit((string)op["tag"], t => SetChangeColor(t, op)); break;
+            case "add_script": Edit((string)op["tag"], t => AddScript(t, (string)op["source"])); break;
             default: throw new NotSupportedException($"unknown op {op["op"]}");
         }
     }
@@ -342,6 +344,25 @@ internal static class Program
                 SetPath(Find(FieldsOf(param), Fields["shader_parameter_bitmap"], IsReference), (string)kv.Value);
             }
         });
+    }
+
+    // Reference the Unified Armory mission script from the scenario's script source files
+    // (once), so tool compiles it into the level alongside the mission's own scripts.
+    static void AddScript(object tag, string source)
+    {
+        object files = Find(FieldsOf(tag), Fields["scenario_source_files"], IsBlock);
+        string wanted = source.Replace('/', '\\');
+        foreach (var el in ElementsOf(files))
+        {
+            var r = FieldsOf(el).FirstOrDefault(IsReference);
+            if (r != null && RefPath(r.GetType().GetProperty("Path")?.GetValue(r)).Equals(wanted, StringComparison.OrdinalIgnoreCase))
+                return;
+        }
+        if (DryRun) return;
+        object added = Invoke(files, "AddElement");
+        var reference = FieldsOf(added).FirstOrDefault(IsReference)
+            ?? throw new MissingFieldException("script source file entries have no reference field");
+        SetPath(reference, wanted);
     }
 
     static void SetChangeColor(object tag, Dictionary<string, object> op)

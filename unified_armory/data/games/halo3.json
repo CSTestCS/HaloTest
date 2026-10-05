@@ -458,7 +458,12 @@
       "levels\\solo\\110_hc\\110_hc",
       "levels\\solo\\120_halo\\120_halo"
     ],
-    "build_command": "tool.exe build-cache-file {scenario}"
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "script": {
+      "player": "(player0)",
+      "file": "unified_armory.hsc",
+      "_verify": "The mission script is attached through the scenario's script source files and compiled by tool when the level is built."
+    }
   },
   "_verify": "Region/permutation names for mp_masterchief and the armor shader template path should be checked in Guerilla."
 }

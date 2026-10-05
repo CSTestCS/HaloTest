@@ -121,20 +121,20 @@ def make_handler(catalog: Catalog, profile_path: Path, out_dir: Path, cache: Pat
                                                                        if g in catalog.games and p}}
                     settings_path.write_text(json.dumps(clean, indent=2))
                     return self._json(200, environment().to_json())
-                if path == "/api/restore":
+                if path in ("/api/pack", "/api/uninstall"):
                     env = environment()
                     if not env.mcc:
                         return self._json(400, {"error": "MCC folder not found; set it in Settings"})
-                    ok = job.start("restore", lambda log: autopilot.restore(catalog, env.mcc, log))
+                    if path == "/api/uninstall":
+                        ok = job.start("uninstall", lambda log: autopilot.uninstall(env.mcc, log))
+                    else:
+                        games = [g for g in (body.get("games") or []) if g in catalog.games] or None
+                        ok = job.start("pack", lambda log: autopilot.build_pack(
+                            catalog, env, cache, out_dir, games=games, log=log, runner=runner))
                     return self._json(200 if ok else 409, {"started": ok})
                 prof = validate_profile(body, catalog)
             except (ProfileError, json.JSONDecodeError) as e:
                 return self._json(400, {"error": str(e)})
-            if path == "/api/apply":
-                save_profile(prof, profile_path)
-                env = environment()
-                ok = job.start("apply", lambda log: autopilot.apply(catalog, prof, env, cache, out_dir, log=log, runner=runner))
-                return self._json(200 if ok else 409, {"started": ok})
             if path == "/api/status":
                 return self._json(200, status(catalog, prof, cache))
             if path == "/api/profile":

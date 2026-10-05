@@ -167,7 +167,12 @@
       "levels\\atlas\\sc140\\sc140",
       "levels\\atlas\\sc150\\sc150"
     ],
-    "build_command": "tool.exe build-cache-file {scenario}"
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "script": {
+      "player": "(player0)",
+      "file": "unified_armory.hsc",
+      "_verify": "The mission script is attached through the scenario's script source files and compiled by tool when the level is built."
+    }
   },
   "_verify": "The Rookie's model/biped paths and the armor shader template are best guesses; check them in the ODST kit."
 }
