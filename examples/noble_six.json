@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "name": "Noble Six",
+  "colors": {
+    "primary": "#626262",
+    "secondary": "#B11B1B"
+  },
+  "armor": {
+    "species": "spartan",
+    "helmet": "commando",
+    "shoulder_left": "security",
+    "shoulder_right": "commando",
+    "chest": "commando",
+    "wrist": "mark_v",
+    "utility": "mark_v",
+    "knees": "mark_v",
+    "visor": "visor_silver",
+    "armor_effect": "effect_none",
+    "armor_skin": "none",
+    "emblem_foreground": "emblem_seventh",
+    "emblem_background": "emblem_bg_solid"
+  },
+  "overrides": {
+    "halo3": {
+      "slots": {
+        "helmet": "hayabusa"
+      },
+      "colors": {}
+    }
+  },
+  "campaign": {
+    "games": [
+      "halo1",
+      "halo2",
+      "halo3",
+      "odst",
+      "reach",
+      "halo4"
+    ],
+    "bake_reach": false
+  }
+}

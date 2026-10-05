@@ -1,0 +1,551 @@
+{
+  "id": "reach",
+  "name": "Halo: Reach",
+  "order": 5,
+  "palette": "classic",
+  "color_channels": [
+    "primary",
+    "secondary"
+  ],
+  "slots": {
+    "species": {
+      "label": "Model",
+      "default": "spartan",
+      "campaign": false,
+      "options": [
+        {
+          "id": "spartan",
+          "name": "Spartan",
+          "family": "spartan"
+        },
+        {
+          "id": "elite",
+          "name": "Elite",
+          "family": "elite"
+        }
+      ]
+    },
+    "helmet": {
+      "label": "Helmet",
+      "default": "mark_v_b",
+      "options": [
+        {
+          "id": "mark_v_b",
+          "name": "Mark V [B]",
+          "family": "mark_v"
+        },
+        {
+          "id": "cqc",
+          "name": "CQC",
+          "family": "cqb"
+        },
+        {
+          "id": "military_police",
+          "name": "Military Police",
+          "family": "military_police"
+        },
+        {
+          "id": "air_assault",
+          "name": "Air Assault",
+          "family": "air_assault"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "eod",
+          "name": "EOD",
+          "family": "eod"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "gungnir",
+          "name": "Gungnir",
+          "family": "gungnir"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "recon",
+          "name": "Recon",
+          "family": "recon"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "odst",
+          "name": "ODST",
+          "family": "odst"
+        },
+        {
+          "id": "mark_vi",
+          "name": "Mark VI",
+          "family": "mark_vi"
+        },
+        {
+          "id": "haunted",
+          "name": "Haunted",
+          "family": "haunted"
+        }
+      ]
+    },
+    "shoulder_left": {
+      "label": "Left Shoulder",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "gungnir",
+          "name": "Gungnir",
+          "family": "gungnir"
+        },
+        {
+          "id": "jfo",
+          "name": "JFO",
+          "family": "recon"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "sniper",
+          "name": "Sniper",
+          "family": "scout"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "ugps",
+          "name": "UGPS",
+          "family": "military_police"
+        }
+      ]
+    },
+    "shoulder_right": {
+      "label": "Right Shoulder",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "gungnir",
+          "name": "Gungnir",
+          "family": "gungnir"
+        },
+        {
+          "id": "jfo",
+          "name": "JFO",
+          "family": "recon"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "sniper",
+          "name": "Sniper",
+          "family": "scout"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "ugps",
+          "name": "UGPS",
+          "family": "military_police"
+        }
+      ]
+    },
+    "chest": {
+      "label": "Chest",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "hp_parafoil",
+          "name": "HP/Parafoil",
+          "family": "pilot"
+        },
+        {
+          "id": "ua_counterassault",
+          "name": "UA/Counterassault",
+          "family": "commando"
+        },
+        {
+          "id": "ua_multi_threat",
+          "name": "UA/Multi-Threat",
+          "family": "security"
+        },
+        {
+          "id": "collar_grenadier",
+          "name": "Collar/Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "gungnir",
+          "name": "Gungnir",
+          "family": "gungnir"
+        },
+        {
+          "id": "assault_commando",
+          "name": "Assault/Commando",
+          "family": "commando"
+        },
+        {
+          "id": "tactical_recon",
+          "name": "Tactical/Recon",
+          "family": "recon"
+        },
+        {
+          "id": "tactical_patrol",
+          "name": "Tactical/Patrol",
+          "family": "scout"
+        },
+        {
+          "id": "hp_hardcase",
+          "name": "HP/Hardcase",
+          "family": "eod"
+        },
+        {
+          "id": "ua_odst",
+          "name": "UA/ODST",
+          "family": "odst"
+        }
+      ]
+    },
+    "wrist": {
+      "label": "Wrist",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "assault_breacher",
+          "name": "Assault/Breacher",
+          "family": "commando"
+        },
+        {
+          "id": "tactical_tacpad",
+          "name": "Tactical/TacPad",
+          "family": "recon"
+        },
+        {
+          "id": "ua_buckler",
+          "name": "UA/Buckler",
+          "family": "security"
+        },
+        {
+          "id": "ua_bracer",
+          "name": "UA/Bracer",
+          "family": "eod"
+        }
+      ]
+    },
+    "utility": {
+      "label": "Utility",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "ua_hardcase",
+          "name": "UA/Hardcase",
+          "family": "eod"
+        },
+        {
+          "id": "tactical_trauma_kit",
+          "name": "Tactical/Trauma Kit",
+          "family": "recon"
+        },
+        {
+          "id": "tactical_ugps",
+          "name": "Tactical/UGPS",
+          "family": "military_police"
+        },
+        {
+          "id": "tactical_hard_drive",
+          "name": "Tactical/Hard Drive",
+          "family": "operator"
+        },
+        {
+          "id": "tactical_soft_case",
+          "name": "Tactical/Soft Case",
+          "family": "scout"
+        }
+      ]
+    },
+    "knees": {
+      "label": "Knee Guards",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "mark_v"
+        },
+        {
+          "id": "fj_para",
+          "name": "FJ/PARA",
+          "family": "pilot"
+        },
+        {
+          "id": "gr_l",
+          "name": "GR/L",
+          "family": "grenadier"
+        },
+        {
+          "id": "ua_cl",
+          "name": "UA/CL",
+          "family": "commando"
+        }
+      ]
+    },
+    "visor": {
+      "label": "Visor Color",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "visor_default"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "family": "visor_silver"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "family": "visor_blue"
+        },
+        {
+          "id": "black",
+          "name": "Black",
+          "family": "visor_black"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "family": "visor_green"
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "family": "visor_red"
+        }
+      ]
+    },
+    "armor_effect": {
+      "label": "Armor Effect",
+      "default": "none",
+      "options": [
+        {
+          "id": "none",
+          "name": "None",
+          "family": "effect_none"
+        },
+        {
+          "id": "heart_attack",
+          "name": "Heart Attack",
+          "family": "effect_heart"
+        },
+        {
+          "id": "pestilence",
+          "name": "Pestilence",
+          "family": "effect_pestilence"
+        },
+        {
+          "id": "flaming_helmet",
+          "name": "Flaming Helmet",
+          "family": "effect_flaming"
+        },
+        {
+          "id": "birthday_party",
+          "name": "Birthday Party",
+          "family": "effect_birthday"
+        }
+      ]
+    },
+    "emblem_foreground": {
+      "label": "Emblem",
+      "default": "seventh_column",
+      "campaign": false,
+      "options": [
+        {
+          "id": "seventh_column",
+          "name": "Seventh Column",
+          "family": "emblem_seventh"
+        },
+        {
+          "id": "bullseye",
+          "name": "Bullseye",
+          "family": "emblem_bullseye"
+        },
+        {
+          "id": "marathon",
+          "name": "Marathon",
+          "family": "emblem_marathon"
+        },
+        {
+          "id": "skull",
+          "name": "Skull",
+          "family": "emblem_skull"
+        }
+      ]
+    },
+    "emblem_background": {
+      "label": "Emblem Background",
+      "default": "solid",
+      "campaign": false,
+      "options": [
+        {
+          "id": "solid",
+          "name": "Solid",
+          "family": "emblem_bg_solid"
+        },
+        {
+          "id": "circle",
+          "name": "Circle",
+          "family": "emblem_bg_circle"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond",
+          "family": "emblem_bg_diamond"
+        }
+      ]
+    }
+  },
+  "campaign": {
+    "strategy": "native",
+    "toolkit": "Reach Editing Kit (ManagedBlam), only when baking",
+    "player_biped": "objects\\characters\\spartans\\spartans.biped",
+    "mp_model": "objects\\characters\\spartans\\spartans.model",
+    "globals": "globals\\globals.globals",
+    "variant_name": "unified_armory",
+    "channels": {
+      "primary": 0,
+      "secondary": 1
+    },
+    "region_for_slot": {
+      "helmet": "helmet",
+      "shoulder_left": "left_shoulder",
+      "shoulder_right": "right_shoulder",
+      "chest": "chest",
+      "wrist": "wrist",
+      "utility": "utility",
+      "knees": "knees",
+      "visor": "visor"
+    },
+    "_verify": "Reach's campaign already reads your MCC armor. Baking is only for when you want the look locked in regardless of profile; check region names against spartans.render_model first.",
+    "scenarios": [
+      "levels\\solo\\m05\\m05",
+      "levels\\solo\\m10\\m10",
+      "levels\\solo\\m20\\m20",
+      "levels\\solo\\m30\\m30",
+      "levels\\solo\\m35\\m35",
+      "levels\\solo\\m45\\m45",
+      "levels\\solo\\m50\\m50",
+      "levels\\solo\\m52\\m52",
+      "levels\\solo\\m60\\m60",
+      "levels\\solo\\m70\\m70",
+      "levels\\solo\\m70_a\\m70_a",
+      "levels\\solo\\m70_bonus\\m70_bonus"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "notes": "Reach's campaign already uses your multiplayer armor, so by default this only gives you a menu checklist. Pass --bake-reach to write the loadout into the tags instead."
+  }
+}

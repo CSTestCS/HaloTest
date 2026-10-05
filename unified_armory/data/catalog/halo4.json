@@ -1,0 +1,509 @@
+{
+  "id": "halo4",
+  "name": "Halo 4",
+  "order": 6,
+  "palette": "classic",
+  "color_channels": [
+    "primary",
+    "secondary"
+  ],
+  "slots": {
+    "helmet": {
+      "label": "Helmet",
+      "default": "recruit",
+      "options": [
+        {
+          "id": "recruit",
+          "name": "Recruit",
+          "family": "recruit"
+        },
+        {
+          "id": "warrior",
+          "name": "Warrior",
+          "family": "warrior"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "recon",
+          "name": "Recon",
+          "family": "recon"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "eod",
+          "name": "EOD",
+          "family": "eod"
+        },
+        {
+          "id": "mark_vi",
+          "name": "Mjolnir Mk. VI",
+          "family": "mark_vi"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "air_assault",
+          "name": "Air Assault",
+          "family": "air_assault"
+        },
+        {
+          "id": "hayabusa",
+          "name": "Hayabusa",
+          "family": "hayabusa"
+        },
+        {
+          "id": "odst",
+          "name": "ODST",
+          "family": "odst"
+        }
+      ]
+    },
+    "shoulder_left": {
+      "label": "Left Shoulder",
+      "default": "recruit",
+      "options": [
+        {
+          "id": "recruit",
+          "name": "Recruit",
+          "family": "recruit"
+        },
+        {
+          "id": "warrior",
+          "name": "Warrior",
+          "family": "warrior"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "recon",
+          "name": "Recon",
+          "family": "recon"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "eod",
+          "name": "EOD",
+          "family": "eod"
+        },
+        {
+          "id": "mark_vi",
+          "name": "Mjolnir Mk. VI",
+          "family": "mark_vi"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "air_assault",
+          "name": "Air Assault",
+          "family": "air_assault"
+        },
+        {
+          "id": "hayabusa",
+          "name": "Hayabusa",
+          "family": "hayabusa"
+        },
+        {
+          "id": "odst",
+          "name": "ODST",
+          "family": "odst"
+        }
+      ]
+    },
+    "shoulder_right": {
+      "label": "Right Shoulder",
+      "default": "recruit",
+      "options": [
+        {
+          "id": "recruit",
+          "name": "Recruit",
+          "family": "recruit"
+        },
+        {
+          "id": "warrior",
+          "name": "Warrior",
+          "family": "warrior"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "recon",
+          "name": "Recon",
+          "family": "recon"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "eod",
+          "name": "EOD",
+          "family": "eod"
+        },
+        {
+          "id": "mark_vi",
+          "name": "Mjolnir Mk. VI",
+          "family": "mark_vi"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "air_assault",
+          "name": "Air Assault",
+          "family": "air_assault"
+        },
+        {
+          "id": "hayabusa",
+          "name": "Hayabusa",
+          "family": "hayabusa"
+        },
+        {
+          "id": "odst",
+          "name": "ODST",
+          "family": "odst"
+        }
+      ]
+    },
+    "chest": {
+      "label": "Chest",
+      "default": "recruit",
+      "options": [
+        {
+          "id": "recruit",
+          "name": "Recruit",
+          "family": "recruit"
+        },
+        {
+          "id": "warrior",
+          "name": "Warrior",
+          "family": "warrior"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "recon",
+          "name": "Recon",
+          "family": "recon"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        },
+        {
+          "id": "eod",
+          "name": "EOD",
+          "family": "eod"
+        },
+        {
+          "id": "mark_vi",
+          "name": "Mjolnir Mk. VI",
+          "family": "mark_vi"
+        },
+        {
+          "id": "commando",
+          "name": "Commando",
+          "family": "commando"
+        },
+        {
+          "id": "security",
+          "name": "Security",
+          "family": "security"
+        },
+        {
+          "id": "pilot",
+          "name": "Pilot",
+          "family": "pilot"
+        },
+        {
+          "id": "operator",
+          "name": "Operator",
+          "family": "operator"
+        },
+        {
+          "id": "grenadier",
+          "name": "Grenadier",
+          "family": "grenadier"
+        },
+        {
+          "id": "air_assault",
+          "name": "Air Assault",
+          "family": "air_assault"
+        },
+        {
+          "id": "hayabusa",
+          "name": "Hayabusa",
+          "family": "hayabusa"
+        },
+        {
+          "id": "odst",
+          "name": "ODST",
+          "family": "odst"
+        }
+      ]
+    },
+    "wrist": {
+      "label": "Forearms",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "recruit"
+        },
+        {
+          "id": "hazop",
+          "name": "Hazop",
+          "family": "eod"
+        },
+        {
+          "id": "tracker",
+          "name": "Tracker",
+          "family": "recon"
+        }
+      ]
+    },
+    "knees": {
+      "label": "Legs",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "recruit"
+        },
+        {
+          "id": "scout",
+          "name": "Scout",
+          "family": "scout"
+        },
+        {
+          "id": "eva",
+          "name": "EVA",
+          "family": "eva"
+        }
+      ]
+    },
+    "visor": {
+      "label": "Visor",
+      "default": "default",
+      "options": [
+        {
+          "id": "default",
+          "name": "Default",
+          "family": "visor_default"
+        },
+        {
+          "id": "silver",
+          "name": "Silver",
+          "family": "visor_silver"
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "family": "visor_blue"
+        },
+        {
+          "id": "black",
+          "name": "Black",
+          "family": "visor_black"
+        },
+        {
+          "id": "green",
+          "name": "Green",
+          "family": "visor_green"
+        },
+        {
+          "id": "red",
+          "name": "Red",
+          "family": "visor_red"
+        }
+      ]
+    },
+    "armor_skin": {
+      "label": "Armor Skin",
+      "default": "none",
+      "options": [
+        {
+          "id": "none",
+          "name": "None",
+          "family": "none"
+        }
+      ]
+    },
+    "emblem_foreground": {
+      "label": "Emblem",
+      "default": "seventh_column",
+      "campaign": false,
+      "options": [
+        {
+          "id": "seventh_column",
+          "name": "Seventh Column",
+          "family": "emblem_seventh"
+        },
+        {
+          "id": "bullseye",
+          "name": "Bullseye",
+          "family": "emblem_bullseye"
+        },
+        {
+          "id": "marathon",
+          "name": "Marathon",
+          "family": "emblem_marathon"
+        },
+        {
+          "id": "skull",
+          "name": "Skull",
+          "family": "emblem_skull"
+        }
+      ]
+    },
+    "emblem_background": {
+      "label": "Emblem Background",
+      "default": "solid",
+      "campaign": false,
+      "options": [
+        {
+          "id": "solid",
+          "name": "Solid",
+          "family": "emblem_bg_solid"
+        },
+        {
+          "id": "circle",
+          "name": "Circle",
+          "family": "emblem_bg_circle"
+        },
+        {
+          "id": "diamond",
+          "name": "Diamond",
+          "family": "emblem_bg_diamond"
+        }
+      ]
+    }
+  },
+  "campaign": {
+    "strategy": "variant_swap",
+    "toolkit": "H4 Editing Kit (ManagedBlam)",
+    "player_biped": "objects\\characters\\storm_masterchief\\storm_masterchief.biped",
+    "mp_biped": "objects\\characters\\spartans\\spartans.biped",
+    "mp_model": "objects\\characters\\spartans\\spartans.model",
+    "globals": "globals\\globals.globals",
+    "variant_name": "unified_armory",
+    "channels": {
+      "primary": 0,
+      "secondary": 1
+    },
+    "region_for_slot": {
+      "helmet": "helmet",
+      "shoulder_left": "left_shoulder",
+      "shoulder_right": "right_shoulder",
+      "chest": "chest",
+      "wrist": "forearms",
+      "knees": "legs",
+      "visor": "visor"
+    },
+    "_verify": "Halo 4 tag paths here are best guesses. Check the campaign Chief and multiplayer Spartan biped paths and the render model regions in your H4 EK before building.",
+    "scenarios": [
+      "levels\\solo\\m10_crash\\m10_crash",
+      "levels\\solo\\m020\\m020",
+      "levels\\solo\\m30_cryptum\\m30_cryptum",
+      "levels\\solo\\m40_invasion\\m40_invasion",
+      "levels\\solo\\m60_rescue\\m60_rescue",
+      "levels\\solo\\m70_liftoff\\m70_liftoff",
+      "levels\\solo\\m80_delta\\m80_delta",
+      "levels\\solo\\m90_sacrifice\\m90_sacrifice"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}",
+    "notes": "The campaign Chief is swapped for the multiplayer Spartan, with a generated model variant built from your Halo 4 armor."
+  }
+}

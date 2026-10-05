@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Build:  dotnet build -c Release -p:EKPath="C:\Program Files (x86)\Steam\steamapps\common\H3EK"
+    ManagedBlam ships with each MCC Editing Kit (H2, H3, ODST, Reach, H4). Any kit works for
+    compiling; at runtime the kit passed on the command line is the one that's loaded.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>ApplyPlan</AssemblyName>
+    <EKPath Condition="'$(EKPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\H3EK</EKPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ManagedBlam">
+      <HintPath>$(EKPath)\bin\ManagedBlam.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+</Project>

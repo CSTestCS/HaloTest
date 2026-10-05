@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+armory_build/
+armory_profile.json
+tools/ApplyPlan/bin/
+tools/ApplyPlan/obj/

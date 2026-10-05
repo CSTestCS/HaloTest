@@ -1,0 +1,15 @@
+[project]
+name = "unified-armory"
+version = "0.1.0"
+description = "One customization editor for every game in Halo: The Master Chief Collection, applied to the campaign player model too."
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+unified-armory = "unified_armory.__main__:main"
+
+[tool.setuptools]
+packages = ["unified_armory"]
+
+[tool.setuptools.package-data]
+unified_armory = ["data/*.json", "data/catalog/*.json", "web/*"]

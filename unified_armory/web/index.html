@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unified Armory</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div>
+    <h1>Unified Armory</h1>
+    <p class="sub">One loadout for every game in the Master Chief Collection, campaign included.</p>
+  </div>
+  <div class="actions">
+    <input id="name" aria-label="Profile name" maxlength="64">
+    <button id="save">Save</button>
+    <button id="build" class="primary">Build mod</button>
+  </div>
+</header>
+<p id="status" role="status"></p>
+<main>
+  <section id="universal" class="panel">
+    <h2>Universal loadout</h2>
+    <p class="hint">Pick once. Each game gets its closest match, and you can override any game on the right.</p>
+    <div id="colors"></div>
+    <div id="slots"></div>
+  </section>
+  <section id="games"></section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
