@@ -7,6 +7,8 @@ cmake_minimum_required(VERSION 3.20)
 project(UnifiedArmoryRuntime CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Static C runtime everywhere (MSVC): version.dll must not depend on a VC++ redistributable.
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
@@ -54,6 +56,5 @@ if(WIN32)
   endif()
   if(MSVC)
     target_compile_options(version PRIVATE /W3 /utf-8)
-    set_property(TARGET version imgui_dx11 ua_core minhook PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
   endif()
 endif()
