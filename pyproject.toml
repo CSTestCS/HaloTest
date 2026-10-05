@@ -1,7 +1,7 @@
 [project]
 name = "unified-armory"
 version = "0.1.0"
-description = "One customization editor for every game in Halo: The Master Chief Collection, applied to the campaign player model too."
+description = "Wear armor from any Halo MCC game in every MCC campaign: extracts, refits and re-imports the real models."
 requires-python = ">=3.10"
 dependencies = []
 
@@ -9,7 +9,7 @@ dependencies = []
 unified-armory = "unified_armory.__main__:main"
 
 [tool.setuptools]
-packages = ["unified_armory"]
+packages = ["unified_armory", "unified_armory.porting"]
 
 [tool.setuptools.package-data]
-unified_armory = ["data/*.json", "data/catalog/*.json", "web/*"]
+unified_armory = ["data/games/*.json", "web/*"]

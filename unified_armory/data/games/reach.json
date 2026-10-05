@@ -1,0 +1,687 @@
+{
+  "id": "reach",
+  "name": "Halo: Reach",
+  "order": 5,
+  "toolkit": "Reach Editing Kit (HREK)",
+  "managedblam": true,
+  "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
+  "models": {
+    "spartans": {
+      "tag": "objects\\characters\\spartans\\spartans.render_model"
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet_mark_v_b",
+      "slot": "helmet",
+      "name": "Mark V [B]",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "mark_v_b"
+      }
+    },
+    {
+      "id": "helmet_cqc",
+      "slot": "helmet",
+      "name": "CQC",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "cqc"
+      }
+    },
+    {
+      "id": "helmet_military_police",
+      "slot": "helmet",
+      "name": "Military Police",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "military_police"
+      }
+    },
+    {
+      "id": "helmet_air_assault",
+      "slot": "helmet",
+      "name": "Air Assault",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "air_assault"
+      }
+    },
+    {
+      "id": "helmet_grenadier",
+      "slot": "helmet",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "helmet_eod",
+      "slot": "helmet",
+      "name": "EOD",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "helmet_eva",
+      "slot": "helmet",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "helmet_commando",
+      "slot": "helmet",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "helmet_pilot",
+      "slot": "helmet",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "helmet_gungnir",
+      "slot": "helmet",
+      "name": "Gungnir",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "gungnir"
+      }
+    },
+    {
+      "id": "helmet_operator",
+      "slot": "helmet",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "helmet_scout",
+      "slot": "helmet",
+      "name": "Scout",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "helmet_recon",
+      "slot": "helmet",
+      "name": "Recon",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "helmet_security",
+      "slot": "helmet",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "helmet_odst",
+      "slot": "helmet",
+      "name": "ODST",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "helmet_mark_vi",
+      "slot": "helmet",
+      "name": "Mark VI",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "mark_vi"
+      }
+    },
+    {
+      "id": "helmet_haunted",
+      "slot": "helmet",
+      "name": "Haunted",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "haunted"
+      }
+    },
+    {
+      "id": "shoulder_left_commando",
+      "slot": "shoulder_left",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "shoulder_left_eva",
+      "slot": "shoulder_left",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_left_gungnir",
+      "slot": "shoulder_left",
+      "name": "Gungnir",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "gungnir"
+      }
+    },
+    {
+      "id": "shoulder_left_jfo",
+      "slot": "shoulder_left",
+      "name": "JFO",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "jfo"
+      }
+    },
+    {
+      "id": "shoulder_left_operator",
+      "slot": "shoulder_left",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "shoulder_left_pilot",
+      "slot": "shoulder_left",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "shoulder_left_security",
+      "slot": "shoulder_left",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_left_sniper",
+      "slot": "shoulder_left",
+      "name": "Sniper",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "sniper"
+      }
+    },
+    {
+      "id": "shoulder_left_grenadier",
+      "slot": "shoulder_left",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "shoulder_left_ugps",
+      "slot": "shoulder_left",
+      "name": "UGPS",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "ugps"
+      }
+    },
+    {
+      "id": "shoulder_right_commando",
+      "slot": "shoulder_right",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "shoulder_right_eva",
+      "slot": "shoulder_right",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_right_gungnir",
+      "slot": "shoulder_right",
+      "name": "Gungnir",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "gungnir"
+      }
+    },
+    {
+      "id": "shoulder_right_jfo",
+      "slot": "shoulder_right",
+      "name": "JFO",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "jfo"
+      }
+    },
+    {
+      "id": "shoulder_right_operator",
+      "slot": "shoulder_right",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "shoulder_right_pilot",
+      "slot": "shoulder_right",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "shoulder_right_security",
+      "slot": "shoulder_right",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_right_sniper",
+      "slot": "shoulder_right",
+      "name": "Sniper",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "sniper"
+      }
+    },
+    {
+      "id": "shoulder_right_grenadier",
+      "slot": "shoulder_right",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "shoulder_right_ugps",
+      "slot": "shoulder_right",
+      "name": "UGPS",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "ugps"
+      }
+    },
+    {
+      "id": "chest_hp_parafoil",
+      "slot": "chest",
+      "name": "HP/Parafoil",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "hp_parafoil"
+      }
+    },
+    {
+      "id": "chest_ua_counterassault",
+      "slot": "chest",
+      "name": "UA/Counterassault",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "ua_counterassault"
+      }
+    },
+    {
+      "id": "chest_ua_multi_threat",
+      "slot": "chest",
+      "name": "UA/Multi-Threat",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "ua_multi_threat"
+      }
+    },
+    {
+      "id": "chest_collar_grenadier",
+      "slot": "chest",
+      "name": "Collar/Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "collar_grenadier"
+      }
+    },
+    {
+      "id": "chest_gungnir",
+      "slot": "chest",
+      "name": "Gungnir",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "gungnir"
+      }
+    },
+    {
+      "id": "chest_assault_commando",
+      "slot": "chest",
+      "name": "Assault/Commando",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "assault_commando"
+      }
+    },
+    {
+      "id": "chest_tactical_recon",
+      "slot": "chest",
+      "name": "Tactical/Recon",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "tactical_recon"
+      }
+    },
+    {
+      "id": "chest_tactical_patrol",
+      "slot": "chest",
+      "name": "Tactical/Patrol",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "tactical_patrol"
+      }
+    },
+    {
+      "id": "chest_hp_hardcase",
+      "slot": "chest",
+      "name": "HP/Hardcase",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "hp_hardcase"
+      }
+    },
+    {
+      "id": "chest_ua_odst",
+      "slot": "chest",
+      "name": "UA/ODST",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "ua_odst"
+      }
+    },
+    {
+      "id": "wrist_assault_breacher",
+      "slot": "wrist",
+      "name": "Assault/Breacher",
+      "model": "spartans",
+      "select": {
+        "region": "wrist",
+        "permutation": "assault_breacher"
+      }
+    },
+    {
+      "id": "wrist_tactical_tacpad",
+      "slot": "wrist",
+      "name": "Tactical/TacPad",
+      "model": "spartans",
+      "select": {
+        "region": "wrist",
+        "permutation": "tactical_tacpad"
+      }
+    },
+    {
+      "id": "wrist_ua_buckler",
+      "slot": "wrist",
+      "name": "UA/Buckler",
+      "model": "spartans",
+      "select": {
+        "region": "wrist",
+        "permutation": "ua_buckler"
+      }
+    },
+    {
+      "id": "wrist_ua_bracer",
+      "slot": "wrist",
+      "name": "UA/Bracer",
+      "model": "spartans",
+      "select": {
+        "region": "wrist",
+        "permutation": "ua_bracer"
+      }
+    },
+    {
+      "id": "utility_ua_hardcase",
+      "slot": "utility",
+      "name": "UA/Hardcase",
+      "model": "spartans",
+      "select": {
+        "region": "utility",
+        "permutation": "ua_hardcase"
+      }
+    },
+    {
+      "id": "utility_tactical_trauma_kit",
+      "slot": "utility",
+      "name": "Tactical/Trauma Kit",
+      "model": "spartans",
+      "select": {
+        "region": "utility",
+        "permutation": "tactical_trauma_kit"
+      }
+    },
+    {
+      "id": "utility_tactical_ugps",
+      "slot": "utility",
+      "name": "Tactical/UGPS",
+      "model": "spartans",
+      "select": {
+        "region": "utility",
+        "permutation": "tactical_ugps"
+      }
+    },
+    {
+      "id": "utility_tactical_hard_drive",
+      "slot": "utility",
+      "name": "Tactical/Hard Drive",
+      "model": "spartans",
+      "select": {
+        "region": "utility",
+        "permutation": "tactical_hard_drive"
+      }
+    },
+    {
+      "id": "utility_tactical_soft_case",
+      "slot": "utility",
+      "name": "Tactical/Soft Case",
+      "model": "spartans",
+      "select": {
+        "region": "utility",
+        "permutation": "tactical_soft_case"
+      }
+    },
+    {
+      "id": "knees_fj_para",
+      "slot": "knees",
+      "name": "FJ/PARA",
+      "model": "spartans",
+      "select": {
+        "region": "knees",
+        "permutation": "fj_para"
+      }
+    },
+    {
+      "id": "knees_gr_l",
+      "slot": "knees",
+      "name": "GR/L",
+      "model": "spartans",
+      "select": {
+        "region": "knees",
+        "permutation": "gr_l"
+      }
+    },
+    {
+      "id": "knees_ua_cl",
+      "slot": "knees",
+      "name": "UA/CL",
+      "model": "spartans",
+      "select": {
+        "region": "knees",
+        "permutation": "ua_cl"
+      }
+    }
+  ],
+  "target": {
+    "base_model": "spartans",
+    "slots": {
+      "helmet": {
+        "region": "helmet"
+      },
+      "chest": {
+        "region": "chest"
+      },
+      "shoulder_left": {
+        "region": "left_shoulder"
+      },
+      "shoulder_right": {
+        "region": "right_shoulder"
+      },
+      "wrist": {
+        "region": "wrist"
+      },
+      "utility": {
+        "region": "utility"
+      },
+      "knees": {
+        "region": "knees"
+      }
+    },
+    "format": "jms",
+    "jms_version": 8213,
+    "max_weights": 4,
+    "data_dir": "objects\\characters\\spartans_armory",
+    "model_file": "render\\spartans_armory.jms",
+    "render_model_tag": "objects\\characters\\spartans_armory\\spartans_armory.render_model",
+    "shader_dir": "objects\\characters\\spartans_armory\\shaders",
+    "shader_ext": "shader",
+    "shader_template": "objects\\characters\\spartans\\shaders\\spartan_armor.shader",
+    "shader_bitmap_params": {
+      "base": "base_map",
+      "normal": "bump_map",
+      "specular": "specular_map",
+      "change_color": "change_color_map"
+    },
+    "bitmap_dir": "objects\\characters\\spartans_armory\\bitmaps",
+    "role_suffix": {
+      "normal": "_zbump"
+    },
+    "import_commands": [
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe render \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "objects\\characters\\spartans\\spartans.model",
+        "field": "render model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "objects\\characters\\spartans\\spartans.biped"
+      ],
+      "channels": {
+        "primary": 0,
+        "secondary": 1
+      }
+    },
+    "scenarios": [
+      "levels\\solo\\m05\\m05",
+      "levels\\solo\\m10\\m10",
+      "levels\\solo\\m20\\m20",
+      "levels\\solo\\m30\\m30",
+      "levels\\solo\\m35\\m35",
+      "levels\\solo\\m45\\m45",
+      "levels\\solo\\m50\\m50",
+      "levels\\solo\\m52\\m52",
+      "levels\\solo\\m60\\m60",
+      "levels\\solo\\m70\\m70",
+      "levels\\solo\\m70_a\\m70_a",
+      "levels\\solo\\m70_bonus\\m70_bonus"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "Reach's campaign normally picks armor permutations from your MCC profile. The ported model has one permutation per region, so the profile's picks fall back to it. The region names, the shader template path and whether the Reach kit imports JMS through `tool render` all need checking in HREK."
+}

@@ -1,9 +1,9 @@
-"""The unified profile: one loadout that every game is resolved from.
+"""The unified profile: one loadout of exact pieces from any game, worn in every campaign.
 
-Universal armor picks name a cross-game *family* (e.g. "eod"), not a
-game-specific option, so a single choice carries across all six games.
-Per-game overrides pin an exact option or swatch when the automatic match
-isn't what you want.
+armor[slot] is a piece id like "reach/helmet_gungnir" (that exact model, ported
+into every game) or "default" (each game keeps its own). overrides[game][slot]
+replaces the pick for one game. Colors are exact: campaign change colors take
+any RGB value, so nothing is snapped to a palette.
 """
 from __future__ import annotations
 
@@ -11,32 +11,18 @@ import copy
 import json
 from pathlib import Path
 
-from .catalog import Catalog
+from .catalog import DEFAULT, SLOTS, Catalog
 from .color import hex_to_rgb
 
-PROFILE_VERSION = 1
+PROFILE_VERSION = 2
 
 DEFAULT_PROFILE = {
     "version": PROFILE_VERSION,
     "name": "Spartan",
     "colors": {"primary": "#556B2F", "secondary": "#556B2F"},
-    "armor": {
-        "species": "spartan",
-        "helmet": "mark_vi",
-        "shoulder_left": "mark_vi",
-        "shoulder_right": "mark_vi",
-        "chest": "mark_vi",
-        "wrist": "mark_v",
-        "utility": "mark_v",
-        "knees": "mark_v",
-        "visor": "visor_default",
-        "armor_effect": "effect_none",
-        "armor_skin": "none",
-        "emblem_foreground": "emblem_seventh",
-        "emblem_background": "emblem_bg_solid",
-    },
+    "armor": {slot: DEFAULT for slot in SLOTS},
     "overrides": {},
-    "campaign": {"games": ["halo1", "halo2", "halo3", "odst", "reach", "halo4"], "bake_reach": False},
+    "campaign": {"games": ["halo1", "halo2", "halo3", "odst", "reach", "halo4"]},
 }
 
 
@@ -48,16 +34,25 @@ def new_profile() -> dict:
     return copy.deepcopy(DEFAULT_PROFILE)
 
 
+def _check_piece(catalog: Catalog, slot: str, value: str, where: str) -> str:
+    if value == DEFAULT:
+        return value
+    try:
+        piece = catalog.piece(value)
+    except KeyError as e:
+        raise ProfileError(f"{where}: {e.args[0]}") from None
+    if piece["slot"] != slot:
+        raise ProfileError(f"{where}: {value!r} is a {piece['slot']} piece, not {slot}")
+    return value
+
+
 def validate_profile(profile: dict, catalog: Catalog) -> dict:
-    """Check a profile against the catalog. Returns a normalized copy, raises ProfileError."""
     if not isinstance(profile, dict):
         raise ProfileError("profile must be a JSON object")
     if profile.get("version", PROFILE_VERSION) != PROFILE_VERSION:
-        raise ProfileError(f"unsupported profile version {profile.get('version')!r}")
-
+        raise ProfileError(f"unsupported profile version {profile.get('version')!r}; create a new profile in the editor")
     out = new_profile()
     out["name"] = str(profile.get("name", out["name"]))[:64]
-
     for channel, value in (profile.get("colors") or {}).items():
         if channel not in ("primary", "secondary"):
             raise ProfileError(f"unknown color channel {channel!r}")
@@ -65,45 +60,33 @@ def validate_profile(profile: dict, catalog: Catalog) -> dict:
             hex_to_rgb(value)
         except (ValueError, AttributeError) as e:
             raise ProfileError(f"colors.{channel}: {e}") from None
-        out["colors"][channel] = value.upper() if value.startswith("#") else "#" + value.upper()
-
-    slots = catalog.universal_slots()
-    for slot, family in (profile.get("armor") or {}).items():
-        if slot not in slots:
-            raise ProfileError(f"armor.{slot}: no game has this slot")
-        if family not in catalog.families:
-            raise ProfileError(f"armor.{slot}: unknown family {family!r}")
-        out["armor"][slot] = family
-
+        out["colors"][channel] = "#" + value.lstrip("#").upper()
+    for slot, value in (profile.get("armor") or {}).items():
+        if slot not in SLOTS:
+            raise ProfileError(f"armor.{slot}: unknown slot")
+        out["armor"][slot] = _check_piece(catalog, slot, value, f"armor.{slot}")
     for game_id, ov in (profile.get("overrides") or {}).items():
-        game = catalog.game(game_id) if game_id in catalog.games else None
-        if game is None:
+        if game_id not in catalog.games:
             raise ProfileError(f"overrides: unknown game {game_id!r}")
-        clean = {"slots": {}, "colors": {}}
-        for slot, option in (ov.get("slots") or {}).items():
-            if slot not in game["slots"]:
-                raise ProfileError(f"overrides.{game_id}.slots: {game['name']} has no slot {slot!r}")
-            if option not in {o["id"] for o in game["slots"][slot]["options"]}:
-                raise ProfileError(f"overrides.{game_id}.slots.{slot}: unknown option {option!r}")
-            clean["slots"][slot] = option
-        swatches = {s["id"] for s in catalog.palette(game_id)}
-        for channel, swatch in (ov.get("colors") or {}).items():
-            if channel not in game["color_channels"]:
-                raise ProfileError(f"overrides.{game_id}.colors: {game['name']} has no {channel!r} color")
-            if swatch not in swatches:
-                raise ProfileError(f"overrides.{game_id}.colors.{channel}: unknown swatch {swatch!r}")
-            clean["colors"][channel] = swatch
-        if clean["slots"] or clean["colors"]:
+        clean = {}
+        for slot, value in (ov or {}).items():
+            if slot not in SLOTS:
+                raise ProfileError(f"overrides.{game_id}.{slot}: unknown slot")
+            clean[slot] = _check_piece(catalog, slot, value, f"overrides.{game_id}.{slot}")
+        if clean:
             out["overrides"][game_id] = clean
-
     camp = profile.get("campaign") or {}
     if "games" in camp:
         unknown = [g for g in camp["games"] if g not in catalog.games]
         if unknown:
             raise ProfileError(f"campaign.games: unknown games {unknown}")
-        out["campaign"]["games"] = list(camp["games"])
-    out["campaign"]["bake_reach"] = bool(camp.get("bake_reach", False))
+        out["campaign"]["games"] = [g["id"] for g in catalog.ordered_games() if g["id"] in camp["games"]]
     return out
+
+
+def loadout_for(profile: dict, game_id: str) -> dict[str, str]:
+    """The pieces a given game's campaign will wear."""
+    return {**profile["armor"], **profile.get("overrides", {}).get(game_id, {})}
 
 
 def load_profile(path: Path, catalog: Catalog) -> dict:

@@ -1,0 +1,757 @@
+{
+  "id": "halo4",
+  "name": "Halo 4",
+  "order": 6,
+  "toolkit": "H4 Editing Kit (H4EK)",
+  "managedblam": true,
+  "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
+  "models": {
+    "spartans": {
+      "tag": "objects\\characters\\spartans\\spartans.render_model"
+    },
+    "storm_masterchief": {
+      "tag": "objects\\characters\\storm_masterchief\\storm_masterchief.render_model"
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet_recruit",
+      "slot": "helmet",
+      "name": "Recruit",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "recruit"
+      }
+    },
+    {
+      "id": "helmet_warrior",
+      "slot": "helmet",
+      "name": "Warrior",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "warrior"
+      }
+    },
+    {
+      "id": "helmet_scout",
+      "slot": "helmet",
+      "name": "Scout",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "helmet_recon",
+      "slot": "helmet",
+      "name": "Recon",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "helmet_eva",
+      "slot": "helmet",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "helmet_eod",
+      "slot": "helmet",
+      "name": "EOD",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "helmet_mark_vi",
+      "slot": "helmet",
+      "name": "Mjolnir Mk. VI",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "mark_vi"
+      }
+    },
+    {
+      "id": "helmet_commando",
+      "slot": "helmet",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "helmet_security",
+      "slot": "helmet",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "helmet_pilot",
+      "slot": "helmet",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "helmet_operator",
+      "slot": "helmet",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "helmet_grenadier",
+      "slot": "helmet",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "helmet_air_assault",
+      "slot": "helmet",
+      "name": "Air Assault",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "air_assault"
+      }
+    },
+    {
+      "id": "helmet_hayabusa",
+      "slot": "helmet",
+      "name": "Hayabusa",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "helmet_odst",
+      "slot": "helmet",
+      "name": "ODST",
+      "model": "spartans",
+      "select": {
+        "region": "helmet",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "shoulder_left_recruit",
+      "slot": "shoulder_left",
+      "name": "Recruit",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "recruit"
+      }
+    },
+    {
+      "id": "shoulder_left_warrior",
+      "slot": "shoulder_left",
+      "name": "Warrior",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "warrior"
+      }
+    },
+    {
+      "id": "shoulder_left_scout",
+      "slot": "shoulder_left",
+      "name": "Scout",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "shoulder_left_recon",
+      "slot": "shoulder_left",
+      "name": "Recon",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "shoulder_left_eva",
+      "slot": "shoulder_left",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_left_eod",
+      "slot": "shoulder_left",
+      "name": "EOD",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "shoulder_left_mark_vi",
+      "slot": "shoulder_left",
+      "name": "Mjolnir Mk. VI",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "mark_vi"
+      }
+    },
+    {
+      "id": "shoulder_left_commando",
+      "slot": "shoulder_left",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "shoulder_left_security",
+      "slot": "shoulder_left",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_left_pilot",
+      "slot": "shoulder_left",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "shoulder_left_operator",
+      "slot": "shoulder_left",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "shoulder_left_grenadier",
+      "slot": "shoulder_left",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "shoulder_left_air_assault",
+      "slot": "shoulder_left",
+      "name": "Air Assault",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "air_assault"
+      }
+    },
+    {
+      "id": "shoulder_left_hayabusa",
+      "slot": "shoulder_left",
+      "name": "Hayabusa",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "shoulder_left_odst",
+      "slot": "shoulder_left",
+      "name": "ODST",
+      "model": "spartans",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "shoulder_right_recruit",
+      "slot": "shoulder_right",
+      "name": "Recruit",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "recruit"
+      }
+    },
+    {
+      "id": "shoulder_right_warrior",
+      "slot": "shoulder_right",
+      "name": "Warrior",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "warrior"
+      }
+    },
+    {
+      "id": "shoulder_right_scout",
+      "slot": "shoulder_right",
+      "name": "Scout",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "shoulder_right_recon",
+      "slot": "shoulder_right",
+      "name": "Recon",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "shoulder_right_eva",
+      "slot": "shoulder_right",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_right_eod",
+      "slot": "shoulder_right",
+      "name": "EOD",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "shoulder_right_mark_vi",
+      "slot": "shoulder_right",
+      "name": "Mjolnir Mk. VI",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "mark_vi"
+      }
+    },
+    {
+      "id": "shoulder_right_commando",
+      "slot": "shoulder_right",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "shoulder_right_security",
+      "slot": "shoulder_right",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_right_pilot",
+      "slot": "shoulder_right",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "shoulder_right_operator",
+      "slot": "shoulder_right",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "shoulder_right_grenadier",
+      "slot": "shoulder_right",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "shoulder_right_air_assault",
+      "slot": "shoulder_right",
+      "name": "Air Assault",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "air_assault"
+      }
+    },
+    {
+      "id": "shoulder_right_hayabusa",
+      "slot": "shoulder_right",
+      "name": "Hayabusa",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "shoulder_right_odst",
+      "slot": "shoulder_right",
+      "name": "ODST",
+      "model": "spartans",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "chest_recruit",
+      "slot": "chest",
+      "name": "Recruit",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "recruit"
+      }
+    },
+    {
+      "id": "chest_warrior",
+      "slot": "chest",
+      "name": "Warrior",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "warrior"
+      }
+    },
+    {
+      "id": "chest_scout",
+      "slot": "chest",
+      "name": "Scout",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "chest_recon",
+      "slot": "chest",
+      "name": "Recon",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "chest_eva",
+      "slot": "chest",
+      "name": "EVA",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "chest_eod",
+      "slot": "chest",
+      "name": "EOD",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "chest_mark_vi",
+      "slot": "chest",
+      "name": "Mjolnir Mk. VI",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "mark_vi"
+      }
+    },
+    {
+      "id": "chest_commando",
+      "slot": "chest",
+      "name": "Commando",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "commando"
+      }
+    },
+    {
+      "id": "chest_security",
+      "slot": "chest",
+      "name": "Security",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "chest_pilot",
+      "slot": "chest",
+      "name": "Pilot",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "pilot"
+      }
+    },
+    {
+      "id": "chest_operator",
+      "slot": "chest",
+      "name": "Operator",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "operator"
+      }
+    },
+    {
+      "id": "chest_grenadier",
+      "slot": "chest",
+      "name": "Grenadier",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "grenadier"
+      }
+    },
+    {
+      "id": "chest_air_assault",
+      "slot": "chest",
+      "name": "Air Assault",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "air_assault"
+      }
+    },
+    {
+      "id": "chest_hayabusa",
+      "slot": "chest",
+      "name": "Hayabusa",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "chest_odst",
+      "slot": "chest",
+      "name": "ODST",
+      "model": "spartans",
+      "select": {
+        "region": "chest",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "wrist_hazop",
+      "slot": "wrist",
+      "name": "Hazop",
+      "model": "spartans",
+      "select": {
+        "region": "forearms",
+        "permutation": "hazop"
+      }
+    },
+    {
+      "id": "wrist_tracker",
+      "slot": "wrist",
+      "name": "Tracker",
+      "model": "spartans",
+      "select": {
+        "region": "forearms",
+        "permutation": "tracker"
+      }
+    },
+    {
+      "id": "knees_scout",
+      "slot": "knees",
+      "name": "Scout Legs",
+      "model": "spartans",
+      "select": {
+        "region": "legs",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "knees_eva",
+      "slot": "knees",
+      "name": "EVA Legs",
+      "model": "spartans",
+      "select": {
+        "region": "legs",
+        "permutation": "eva"
+      }
+    }
+  ],
+  "target": {
+    "base_model": "storm_masterchief",
+    "slots": {
+      "helmet": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      },
+      "chest": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      },
+      "shoulder_left": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      },
+      "shoulder_right": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      },
+      "wrist": {
+        "bones": [
+          "l_forearm",
+          "r_forearm"
+        ],
+        "descendants": false
+      },
+      "knees": {
+        "bones": [
+          "l_calf",
+          "r_calf"
+        ],
+        "descendants": false
+      },
+      "utility": null
+    },
+    "format": "gltf",
+    "max_weights": 4,
+    "data_dir": "objects\\characters\\storm_masterchief_armory",
+    "model_file": "render\\storm_masterchief_armory.glb",
+    "render_model_tag": "objects\\characters\\storm_masterchief_armory\\storm_masterchief_armory.render_model",
+    "shader_dir": "objects\\characters\\storm_masterchief_armory\\shaders",
+    "shader_ext": "material",
+    "shader_template": "objects\\characters\\storm_masterchief\\shaders\\masterchief_armor.material",
+    "shader_bitmap_params": {
+      "base": "color_map",
+      "normal": "normal_map",
+      "specular": "specular_map",
+      "change_color": "color_mask_map"
+    },
+    "bitmap_dir": "objects\\characters\\storm_masterchief_armory\\bitmaps",
+    "role_suffix": {
+      "normal": "_normal"
+    },
+    "import_commands": [
+      "\"%BLENDER%\" --background --python \"{tools}\\blender\\gltf_to_fbx.py\" -- \"{data_root}\\{data_dir}\\render\\storm_masterchief_armory.glb\" \"{data_root}\\{data_dir}\\render\\storm_masterchief_armory.fbx\"",
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe fbx-to-gr2 \"{data_root}\\{data_dir}\\render\\storm_masterchief_armory.fbx\" \"{data_root}\\{data_dir}\\render\\storm_masterchief_armory.json\" \"{data_root}\\{data_dir}\\render\\storm_masterchief_armory.gr2\"",
+      "tool.exe import \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "objects\\characters\\storm_masterchief\\storm_masterchief.model",
+        "field": "render model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "objects\\characters\\storm_masterchief\\storm_masterchief.biped"
+      ],
+      "channels": {
+        "primary": 0,
+        "secondary": 1
+      }
+    },
+    "scenarios": [
+      "levels\\solo\\m10_crash\\m10_crash",
+      "levels\\solo\\m020\\m020",
+      "levels\\solo\\m30_cryptum\\m30_cryptum",
+      "levels\\solo\\m40_invasion\\m40_invasion",
+      "levels\\solo\\m60_rescue\\m60_rescue",
+      "levels\\solo\\m70_liftoff\\m70_liftoff",
+      "levels\\solo\\m80_delta\\m80_delta",
+      "levels\\solo\\m90_sacrifice\\m90_sacrifice"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "Halo 4 is the least certain route. Its kit imports GR2, made from FBX by `tool fbx-to-gr2`, which also wants a JSON sidecar describing the model. That sidecar isn't generated here; the Foundry Blender add-on can produce the FBX+JSON pair. The tag paths and region names are best guesses."
+}

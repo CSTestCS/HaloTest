@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "Noble Chief",
+  "colors": {"primary": "#3E4A2C", "secondary": "#B11B1B"},
+  "armor": {
+    "helmet": "reach/helmet_gungnir",
+    "chest": "halo3/chest_eod",
+    "shoulder_left": "halo1/shoulder_left",
+    "shoulder_right": "halo4/shoulder_right_warrior",
+    "wrist": "default",
+    "utility": "reach/utility_ua_hardcase",
+    "knees": "default"
+  },
+  "overrides": {"halo2": {"helmet": "halo2/elite_helmet"}},
+  "campaign": {"games": ["halo1", "halo2", "halo3", "odst", "reach", "halo4"]}
+}

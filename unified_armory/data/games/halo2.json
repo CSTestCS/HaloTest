@@ -1,0 +1,185 @@
+{
+  "id": "halo2",
+  "name": "Halo 2",
+  "order": 2,
+  "toolkit": "H2 Editing Kit (H2EK)",
+  "managedblam": true,
+  "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
+  "models": {
+    "masterchief": {
+      "tag": "objects\\characters\\masterchief\\masterchief.render_model"
+    },
+    "elite": {
+      "tag": "objects\\characters\\elite\\elite.render_model"
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet",
+      "slot": "helmet",
+      "name": "Mark VI (H2) Helmet",
+      "model": "masterchief",
+      "select": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      }
+    },
+    {
+      "id": "chest",
+      "slot": "chest",
+      "name": "Mark VI (H2) Chest",
+      "model": "masterchief",
+      "select": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_left",
+      "slot": "shoulder_left",
+      "name": "Mark VI (H2) Left Shoulder",
+      "model": "masterchief",
+      "select": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_right",
+      "slot": "shoulder_right",
+      "name": "Mark VI (H2) Right Shoulder",
+      "model": "masterchief",
+      "select": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "elite_helmet",
+      "slot": "helmet",
+      "name": "Elite (H2) Helmet",
+      "model": "elite",
+      "select": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      }
+    }
+  ],
+  "target": {
+    "base_model": "masterchief",
+    "slots": {
+      "helmet": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      },
+      "chest": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      },
+      "shoulder_left": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      },
+      "shoulder_right": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      },
+      "wrist": {
+        "bones": [
+          "l_forearm",
+          "r_forearm"
+        ],
+        "descendants": false
+      },
+      "knees": {
+        "bones": [
+          "l_calf",
+          "r_calf"
+        ],
+        "descendants": false
+      },
+      "utility": null
+    },
+    "format": "jms",
+    "jms_version": 8210,
+    "max_weights": 4,
+    "data_dir": "objects\\characters\\masterchief_armory",
+    "model_file": "render\\masterchief_armory.jms",
+    "render_model_tag": "objects\\characters\\masterchief_armory\\masterchief_armory.render_model",
+    "shader_dir": "objects\\characters\\masterchief_armory\\shaders",
+    "shader_ext": "shader",
+    "shader_template": "objects\\characters\\masterchief\\shaders\\masterchief.shader",
+    "shader_bitmap_params": {
+      "base": "base_map",
+      "normal": "bump_map",
+      "specular": "specular_map",
+      "change_color": "change_color_map"
+    },
+    "bitmap_dir": "objects\\characters\\masterchief_armory\\bitmaps",
+    "role_suffix": {
+      "normal": "_bump"
+    },
+    "import_commands": [
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe render \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "objects\\characters\\masterchief\\masterchief.model",
+        "field": "render model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "objects\\characters\\masterchief\\masterchief.biped",
+        "objects\\characters\\dervish\\dervish.biped"
+      ],
+      "channels": {
+        "primary": 0,
+        "secondary": 1
+      }
+    },
+    "scenarios": [
+      "scenarios\\solo\\01a_tutorial\\01a_tutorial",
+      "scenarios\\solo\\01b_spacestation\\01b_spacestation",
+      "scenarios\\solo\\03a_oldmombasa\\earthcity_1",
+      "scenarios\\solo\\03b_newmombasa\\earthcity_2",
+      "scenarios\\solo\\04a_gasgiant\\04a_gasgiant",
+      "scenarios\\solo\\04b_floodlab\\04b_floodlab",
+      "scenarios\\solo\\05a_deltaapproach\\05a_deltaapproach",
+      "scenarios\\solo\\05b_deltatowers\\05b_deltatowers",
+      "scenarios\\solo\\06a_sentinelwalls\\06a_sentinelwalls",
+      "scenarios\\solo\\06b_floodzone\\06b_floodzone",
+      "scenarios\\solo\\07a_highcharity\\07a_highcharity",
+      "scenarios\\solo\\07b_forerunnership\\07b_forerunnership",
+      "scenarios\\solo\\08a_deltacliffs\\08a_deltacliffs",
+      "scenarios\\solo\\08b_deltacontrol\\08b_deltacontrol"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "Halo 2 render models store geometry in sections. If extraction reports missing fields, add the H2EK names under dump_fields, or export masterchief to JMS and save it as model.jms in the cache's halo2\\masterchief folder."
+}

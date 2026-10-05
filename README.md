@@ -1,73 +1,93 @@
 # Unified Armory
 
-One customization editor for every game in **Halo: The Master Chief Collection**: Halo CE, Halo 2, Halo 3, ODST, Reach and Halo 4. It also carries your loadout into each game's **campaign** player model.
+Wear armor from **any** Halo: The Master Chief Collection game in **every** MCC campaign. For example: a Reach Gungnir helmet, a Halo 3 EOD chest, a Halo CE Mark V shoulder and a Halo 4 Warrior shoulder, all on the Chief in Halo 2.
 
-You pick your armor once. Each game gets its closest match: "CQB" becomes Reach's *CQC*, and a Military Police helmet falls back to *Security* in Halo 3. Colors snap to each game's palette using perceptual (CIELAB) matching. You can override any game individually. Then **Build mod** writes, for each game:
-
-- **A tag-edit plan** that puts your colors and armor on the campaign player.
-- **Scripts** that apply the plan through the official Editing Kit and rebuild the campaign maps.
-- **A menu checklist** showing what to pick in MCC's own Customize screen for multiplayer.
+These are the real models, not lookalikes. Unified Armory pulls each piece's 3D model and textures out of its own game's Editing Kit. It refits the piece to the target game's skeleton and combines it with that game's player body. Then it imports the result through the target game's Editing Kit and points the campaign player at it.
 
 ![editor](docs/editor.png)
+
+## How it works
+
+```
+ source game kit ──extract──▶ cache ──refit + merge──▶ target data folder ──install──▶ target kit ──build──▶ campaign .map
+ (ArmoryTool)                (JSON/JMS/TGA)  (Python)    (JMS/glTF + TIFF)  (tool.exe + ArmoryTool)       (tool.exe)
+```
+
+1. **Extract.** `ArmoryTool extract` uses ManagedBlam to dump the source render model and the shaders it uses. It exports their textures with the kit's `tool.exe`. Halo CE's kit has no ManagedBlam, so for CE you export the Chief to JMS once with a community tool.
+2. **Refit** (`unified_armory/porting`). Each piece is cut out of its model by region and permutation (the multiplayer Spartans), or by bone (the campaign characters).
+   - **Bone names are matched across games:** `frame l upperarm`, `b_l_upperarm` and `UpperArm_L` are all the same bone.
+   - **Each vertex is moved from the source pose into the target pose** and re-weighted to the target's bones. Weights are limited to 2 per vertex for CE and 4 for later games.
+   - **Sizes are adjusted** to each skeleton's proportions.
+   - **The target's own armor in that slot is removed** and the new piece takes its place.
+3. **Write.** You get one model per game: JMS for CE (8200), H2 (8210), H3, ODST and Reach (8213), or glTF to FBX for Halo 4. Textures are converted to TIFF. A `plan.json` lists the tag edits:
+   - **Before import:** shaders for every material. The game's own shaders are reused. Imported pieces get a copy of the target's armor shader pointed at the ported textures, so armor change-colors keep working.
+   - **After import:** the campaign player's `.model` points at the new render model, and your **exact** primary and secondary colors are pinned on the player's change colors.
+4. **Install and build.** `install.bat` runs the import and the tag edits. `build.bat` compiles that game's campaign levels.
 
 ## Quick start
 
 ```sh
-python -m unified_armory edit        # opens the editor at http://127.0.0.1:8642
-python -m unified_armory resolve     # print what each game gets
-python -m unified_armory build       # write ./armory_build/<game>/...
-python -m unified_armory validate    # check the catalog data
+python -m unified_armory edit       # editor at http://127.0.0.1:8642: pick pieces, click Build mod
+python -m unified_armory build      # same as the Build mod button
+python -m unified_armory pieces     # list every piece id
 ```
 
-You only need Python 3.10+, with no dependencies. Your profile is saved to `armory_profile.json`. See `examples/noble_six.json` for an example.
+You need Python 3.10+ and nothing else. `examples/mixed_loadout.json` shows the profile format.
 
-## How each campaign gets your look
+### On your Windows PC
 
-| Game | Strategy | What changes in campaign |
-|---|---|---|
-| Halo CE | `change_colors` | The Chief's armor color (CE has no armor pieces) |
-| Halo 2 | `change_colors` | Primary and secondary colors on the Chief and the Arbiter |
-| Halo 3 | `variant_swap` | The campaign player becomes the multiplayer Spartan, using a generated model variant with your helmet, shoulders, body and visor, plus your colors |
-| ODST | `change_colors` | Squad armor colors (MCC ODST has no armor pieces) |
-| Reach | `native` | Reach's campaign already uses your MCC armor, so you only get a checklist. `--bake-reach` writes the loadout into the tags instead |
-| Halo 4 | `variant_swap` | Same approach as Halo 3, using the Halo 4 multiplayer Spartan |
+1. Install the MCC Editing Kits (Steam, Library → Tools) for the games involved, and **back up each kit's `tags` folder**.
+2. Build ArmoryTool once: `dotnet build tools/ArmoryTool -c Release -p:EKPath="<any kit>"`. Then put it on your `PATH` or set `ARMORYTOOL` to its path.
+3. Click **Build mod**. The first build lists what to extract: run `armory_build\extract\<game>.bat "<kit path>"` for each game listed. For Halo CE, follow `extract\halo1.txt`. Then build again.
+4. For each game, follow `armory_build\<game>\NOTES.md`:
+   1. Check `preview.glb` in Blender.
+   2. Run `install.bat "<kit>"`, then `build.bat "<kit>"`.
+   3. Back up MCC's original campaign maps and copy the built ones over them.
+   4. Launch MCC with mods (EAC off). To undo, use Steam → Verify integrity.
 
-Items marked **MP only** in the editor (species, emblem) appear only in the menu checklist.
+## What's verified and what isn't
 
-## Applying a build
+**Tested here** (39 tests, synthetic models for all six games in each game's naming style and proportions):
+- **Refitting:** bone matching across naming styles, refitting with rotated and scaled skeletons, and weight limits.
+- **Cutting and merging:** selecting pieces by permutation and by bone, swapping slots, and merging materials.
+- **Formats:** JMS read/write round trips for both dialects, tag dump parsing (triangle lists and strips), and TGA→TIFF and glTF output.
+- **The full build:** one mixed loadout ported into all six campaigns, with each helmet landing exactly on that game's head.
 
-Each game folder under `armory_build/` contains `plan.json`, `CHECKLIST.md`, and, when there are campaign edits, `apply.bat` and `build.bat`.
+**Not tested: nothing has run against a real Editing Kit or MCC install.** Expect to fix data, not code. Everything game-specific lives in `unified_armory/data/games/<game>.json`:
+- **Tag paths and names:** model, biped and shader template paths, region and permutation names, and shader parameter names.
+- **Kit field names:** if extraction or import reports a missing field, add the kit's name under `dump_fields` in that game's data file.
+- **Kit commands:** the bitmap export and model import commands.
 
-1. Install that game's MCC Editing Kit (Steam → Tools) and **back up its `tags` folder**.
-2. Build the applier once:
-   `dotnet build tools/ApplyPlan -c Release -p:EKPath="<path to any MCC Editing Kit>"`
-3. Run `apply.bat "<Editing Kit path>" --dry-run` to preview, then run it again without `--dry-run`. Set `APPLYPLAN` to the applier's path if it isn't on your `PATH`.
-4. Run `build.bat "<Editing Kit path>"` to compile the campaign maps with `tool.exe`.
-5. Play the built maps through MCC's mod flow (launch with Easy Anti-Cheat off).
+ArmoryTool is written against ManagedBlam (`TagFile`, `TagFieldBlock`, `TagFieldReference`). It deliberately finds fields by name and sets values by reflection so one build works across kits. Run `ArmoryTool dump <kit> <tag> out.json` to see a tag's real field names.
 
-Halo CE's Editing Kit has no ManagedBlam. For CE, apply the single change-color edit in `plan.json` by hand in Guerilla, then run `build.bat`.
-
-## Limits
-
-- **MCC's online profile can't be written by a mod.** Multiplayer customization is set in MCC's menus, which is why every build includes a checklist.
-- **Verify tag names in your kit.** Biped, model and globals paths, render-model region names and permutation names are data in `unified_armory/data/catalog/*.json`, not engine constants. Halo 3 paths follow the kit's standard layout. **Halo 4 paths are best guesses.** Plans flag what needs checking, and you can fix it in the catalog JSON without touching code.
-- **ApplyPlan finds fields by name** (for example `change colors` or `player representation`) rather than by fixed struct paths, and writes values by reflection. If a kit names a field differently, override it under `campaign.fields` in that game's catalog.
-- **ApplyPlan has not been run against a real Editing Kit.** It was written against ManagedBlam's API (`ManagedBlamSystem`, `TagFile`, `TagFieldBlock`). Start with `--dry-run` and a backed-up `tags` folder.
-- **Palette hex values are approximations** of the in-game swatches. They're used for matching and preview only.
+**Known hard spots:**
+- **Halo CE:** no ManagedBlam in its kit. You export the Chief to JMS once with a community tool, and make its shader and biped edits by hand. NOTES.md lists them exactly.
+- **Halo 2:** render models store geometry in sections, which may need extra `dump_fields` names. Exporting the model to JMS by hand also works: a `model.jms` in the cache folder replaces the tag dump for any game.
+- **Reach:** the campaign normally applies your MCC profile's armor. The ported model has one permutation per region, so Reach falls back to it.
+- **Halo 4:** its kit imports GR2 through `tool fbx-to-gr2`, which needs a JSON sidecar this project doesn't generate. The Foundry Blender add-on can produce it from the `.glb`.
+- **Fit and seams:** pieces sized for one body can clip on another. Per-piece `scale` and `offset` in the data files are there for tuning.
+- **Textures:** normal-map conventions differ between engines, and CE uses height-based bump maps, so CE gets diffuse and change-color maps only.
+- **Multiplayer:** MCC's multiplayer customization comes from your online profile and its own menus, and ported pieces don't appear there. This mod targets the campaigns.
 
 ## Layout
 
 ```
 unified_armory/
-  data/families.json        cross-game armor families + fallback chains
-  data/palette_classic.json shared MCC color palette
-  data/catalog/<game>.json  slots, options, palette, campaign strategy, tag paths, scenarios
-  catalog.py  color.py  profile.py  resolver.py  backends.py  export.py  server.py  __main__.py
-  web/                      the editor (vanilla HTML/CSS/JS)
-tools/ApplyPlan/            ManagedBlam applier (C#, .NET Framework 4.8 x64)
-tests/                      python -m unittest discover -s tests
+  data/games/<game>.json   pieces, source models, target settings, campaign levels
+  porting/                 umesh (neutral mesh), retarget, assemble, tagdump, jms, gltf, images, cache
+  catalog.py profile.py backends.py export.py server.py __main__.py
+  web/                     the editor
+tools/ArmoryTool/          ManagedBlam extract/dump/apply (C#, .NET Framework 4.8 x64)
+tools/blender/             headless glTF→FBX for the Halo 4 route
+tests/                     PYTHONPATH=. python -m unittest discover -s tests
 ```
 
-## Adding armor or a game
+## Adding a piece
 
-Add an option to a catalog slot with a `family` from `families.json`. Add new families there, with a `similar` fallback chain. If the render model's permutation name differs from the option `id`, set `"permutation"` on the option. Run `python -m unified_armory validate` and the tests afterwards.
+Add an entry to a game's `pieces` list:
+
+```json
+{"id": "helmet_x", "slot": "helmet", "name": "X", "model": "spartans", "select": {"region": "helmet", "permutation": "x"}}
+```
+
+Or select by bone: `"select": {"bones": ["head"], "descendants": true}`. Then run `python -m unified_armory validate`.

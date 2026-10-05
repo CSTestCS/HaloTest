@@ -1,0 +1,166 @@
+{
+  "id": "odst",
+  "name": "Halo 3: ODST",
+  "order": 4,
+  "toolkit": "ODST Editing Kit",
+  "managedblam": true,
+  "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
+  "models": {
+    "odst_recon": {
+      "tag": "objects\\characters\\odst_recon\\odst_recon.render_model"
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet",
+      "slot": "helmet",
+      "name": "ODST Recon (Rookie) Helmet",
+      "model": "odst_recon",
+      "select": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      }
+    },
+    {
+      "id": "chest",
+      "slot": "chest",
+      "name": "ODST Body Armor",
+      "model": "odst_recon",
+      "select": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_left",
+      "slot": "shoulder_left",
+      "name": "ODST Left Shoulder",
+      "model": "odst_recon",
+      "select": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_right",
+      "slot": "shoulder_right",
+      "name": "ODST Right Shoulder",
+      "model": "odst_recon",
+      "select": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      }
+    }
+  ],
+  "target": {
+    "base_model": "odst_recon",
+    "slots": {
+      "helmet": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      },
+      "chest": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      },
+      "shoulder_left": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      },
+      "shoulder_right": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      },
+      "wrist": {
+        "bones": [
+          "l_forearm",
+          "r_forearm"
+        ],
+        "descendants": false
+      },
+      "knees": {
+        "bones": [
+          "l_calf",
+          "r_calf"
+        ],
+        "descendants": false
+      },
+      "utility": null
+    },
+    "format": "jms",
+    "jms_version": 8213,
+    "max_weights": 4,
+    "data_dir": "objects\\characters\\odst_armory",
+    "model_file": "render\\odst_armory.jms",
+    "render_model_tag": "objects\\characters\\odst_armory\\odst_armory.render_model",
+    "shader_dir": "objects\\characters\\odst_armory\\shaders",
+    "shader_ext": "shader",
+    "shader_template": "objects\\characters\\odst_recon\\shaders\\odst_recon_armor.shader",
+    "shader_bitmap_params": {
+      "base": "base_map",
+      "normal": "bump_map",
+      "specular": "specular_map",
+      "change_color": "change_color_map"
+    },
+    "bitmap_dir": "objects\\characters\\odst_armory\\bitmaps",
+    "role_suffix": {
+      "normal": "_zbump"
+    },
+    "import_commands": [
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe render \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "objects\\characters\\odst_recon\\odst_recon.model",
+        "field": "render model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "objects\\characters\\odst_recon\\odst_recon.biped"
+      ],
+      "channels": {
+        "primary": 0,
+        "secondary": 1
+      }
+    },
+    "scenarios": [
+      "levels\\atlas\\c100\\c100",
+      "levels\\atlas\\c200\\c200",
+      "levels\\atlas\\h100\\h100",
+      "levels\\atlas\\l200\\l200",
+      "levels\\atlas\\l300\\l300",
+      "levels\\atlas\\sc100\\sc100",
+      "levels\\atlas\\sc110\\sc110",
+      "levels\\atlas\\sc120\\sc120",
+      "levels\\atlas\\sc130\\sc130",
+      "levels\\atlas\\sc140\\sc140",
+      "levels\\atlas\\sc150\\sc150"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "The Rookie's model/biped paths and the armor shader template are best guesses; check them in the ODST kit."
+}

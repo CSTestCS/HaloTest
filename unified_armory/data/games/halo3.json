@@ -1,0 +1,458 @@
+{
+  "id": "halo3",
+  "name": "Halo 3",
+  "order": 3,
+  "toolkit": "H3 Editing Kit (H3EK)",
+  "managedblam": true,
+  "bitmap_export": "tool.exe export-bitmap-tga \"{tag}\" \"{out}\"",
+  "models": {
+    "mp_masterchief": {
+      "tag": "objects\\characters\\masterchief\\mp_masterchief\\mp_masterchief.render_model"
+    },
+    "masterchief": {
+      "tag": "objects\\characters\\masterchief\\masterchief.render_model"
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet_base",
+      "slot": "helmet",
+      "name": "Mark VI",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "base"
+      }
+    },
+    {
+      "id": "helmet_cqb",
+      "slot": "helmet",
+      "name": "CQB",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "cqb"
+      }
+    },
+    {
+      "id": "helmet_eva",
+      "slot": "helmet",
+      "name": "EVA",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "helmet_eod",
+      "slot": "helmet",
+      "name": "EOD",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "helmet_recon",
+      "slot": "helmet",
+      "name": "Recon",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "helmet_hayabusa",
+      "slot": "helmet",
+      "name": "Hayabusa",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "helmet_security",
+      "slot": "helmet",
+      "name": "Security",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "helmet_scout",
+      "slot": "helmet",
+      "name": "Scout",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "helmet_odst",
+      "slot": "helmet",
+      "name": "ODST",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "odst"
+      }
+    },
+    {
+      "id": "helmet_mark_v",
+      "slot": "helmet",
+      "name": "Mark V",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "mark_v"
+      }
+    },
+    {
+      "id": "helmet_rogue",
+      "slot": "helmet",
+      "name": "Rogue",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "helmet",
+        "permutation": "rogue"
+      }
+    },
+    {
+      "id": "shoulder_left_base",
+      "slot": "shoulder_left",
+      "name": "Mark VI",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "base"
+      }
+    },
+    {
+      "id": "shoulder_left_cqb",
+      "slot": "shoulder_left",
+      "name": "CQB",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "cqb"
+      }
+    },
+    {
+      "id": "shoulder_left_eva",
+      "slot": "shoulder_left",
+      "name": "EVA",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_left_eod",
+      "slot": "shoulder_left",
+      "name": "EOD",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "shoulder_left_recon",
+      "slot": "shoulder_left",
+      "name": "Recon",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "shoulder_left_hayabusa",
+      "slot": "shoulder_left",
+      "name": "Hayabusa",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "shoulder_left_security",
+      "slot": "shoulder_left",
+      "name": "Security",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_left_scout",
+      "slot": "shoulder_left",
+      "name": "Scout",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "left_shoulder",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "shoulder_right_base",
+      "slot": "shoulder_right",
+      "name": "Mark VI",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "base"
+      }
+    },
+    {
+      "id": "shoulder_right_cqb",
+      "slot": "shoulder_right",
+      "name": "CQB",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "cqb"
+      }
+    },
+    {
+      "id": "shoulder_right_eva",
+      "slot": "shoulder_right",
+      "name": "EVA",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "shoulder_right_eod",
+      "slot": "shoulder_right",
+      "name": "EOD",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "shoulder_right_recon",
+      "slot": "shoulder_right",
+      "name": "Recon",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "shoulder_right_hayabusa",
+      "slot": "shoulder_right",
+      "name": "Hayabusa",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "shoulder_right_security",
+      "slot": "shoulder_right",
+      "name": "Security",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "security"
+      }
+    },
+    {
+      "id": "shoulder_right_scout",
+      "slot": "shoulder_right",
+      "name": "Scout",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "right_shoulder",
+        "permutation": "scout"
+      }
+    },
+    {
+      "id": "chest_base",
+      "slot": "chest",
+      "name": "Mark VI",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "base"
+      }
+    },
+    {
+      "id": "chest_cqb",
+      "slot": "chest",
+      "name": "CQB",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "cqb"
+      }
+    },
+    {
+      "id": "chest_eva",
+      "slot": "chest",
+      "name": "EVA",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "eva"
+      }
+    },
+    {
+      "id": "chest_eod",
+      "slot": "chest",
+      "name": "EOD",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "eod"
+      }
+    },
+    {
+      "id": "chest_recon",
+      "slot": "chest",
+      "name": "Recon",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "recon"
+      }
+    },
+    {
+      "id": "chest_hayabusa",
+      "slot": "chest",
+      "name": "Hayabusa",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "hayabusa"
+      }
+    },
+    {
+      "id": "chest_scout",
+      "slot": "chest",
+      "name": "Scout",
+      "model": "mp_masterchief",
+      "select": {
+        "region": "chest",
+        "permutation": "scout"
+      }
+    }
+  ],
+  "target": {
+    "base_model": "masterchief",
+    "slots": {
+      "helmet": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      },
+      "chest": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      },
+      "shoulder_left": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      },
+      "shoulder_right": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      },
+      "wrist": {
+        "bones": [
+          "l_forearm",
+          "r_forearm"
+        ],
+        "descendants": false
+      },
+      "knees": {
+        "bones": [
+          "l_calf",
+          "r_calf"
+        ],
+        "descendants": false
+      },
+      "utility": null
+    },
+    "format": "jms",
+    "jms_version": 8213,
+    "max_weights": 4,
+    "data_dir": "objects\\characters\\masterchief_armory",
+    "model_file": "render\\masterchief_armory.jms",
+    "render_model_tag": "objects\\characters\\masterchief_armory\\masterchief_armory.render_model",
+    "shader_dir": "objects\\characters\\masterchief_armory\\shaders",
+    "shader_ext": "shader",
+    "shader_template": "objects\\characters\\masterchief\\shaders\\masterchief_armor.shader",
+    "shader_bitmap_params": {
+      "base": "base_map",
+      "normal": "bump_map",
+      "specular": "specular_map",
+      "change_color": "change_color_map"
+    },
+    "bitmap_dir": "objects\\characters\\masterchief_armory\\bitmaps",
+    "role_suffix": {
+      "normal": "_zbump"
+    },
+    "import_commands": [
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe render \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "objects\\characters\\masterchief\\masterchief.model",
+        "field": "render model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "objects\\characters\\masterchief\\masterchief.biped"
+      ],
+      "channels": {
+        "primary": 0,
+        "secondary": 1
+      }
+    },
+    "scenarios": [
+      "levels\\solo\\005_intro\\005_intro",
+      "levels\\solo\\010_jungle\\010_jungle",
+      "levels\\solo\\020_base\\020_base",
+      "levels\\solo\\030_outskirts\\030_outskirts",
+      "levels\\solo\\040_voi\\040_voi",
+      "levels\\solo\\050_floodvoi\\050_floodvoi",
+      "levels\\solo\\070_waste\\070_waste",
+      "levels\\solo\\100_citadel\\100_citadel",
+      "levels\\solo\\110_hc\\110_hc",
+      "levels\\solo\\120_halo\\120_halo"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "Region/permutation names for mp_masterchief and the armor shader template path should be checked in Guerilla."
+}

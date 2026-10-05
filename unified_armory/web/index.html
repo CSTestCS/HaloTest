@@ -7,10 +7,10 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
+<header class="top">
   <div>
     <h1>Unified Armory</h1>
-    <p class="sub">One loadout for every game in the Master Chief Collection, campaign included.</p>
+    <p class="sub">Wear armor from any Halo game in every Master Chief Collection campaign.</p>
   </div>
   <div class="actions">
     <input id="name" aria-label="Profile name" maxlength="64">
@@ -20,13 +20,21 @@
 </header>
 <p id="status" role="status"></p>
 <main>
-  <section id="universal" class="panel">
-    <h2>Universal loadout</h2>
-    <p class="hint">Pick once. Each game gets its closest match, and you can override any game on the right.</p>
+  <section class="panel" id="loadout">
+    <h2>Loadout</h2>
+    <p class="hint">Each piece is the real model from its game, ported into every campaign below.</p>
     <div id="colors"></div>
     <div id="slots"></div>
   </section>
-  <section id="games"></section>
+  <div class="col">
+    <section class="panel" id="sources">
+      <h2>Source models</h2>
+      <p class="hint">Models this loadout needs from each game's Editing Kit. Build mod writes the extraction scripts for any that are missing.</p>
+      <ul id="models"></ul>
+    </section>
+    <section id="result" class="panel" hidden></section>
+    <section id="games"></section>
+  </div>
 </main>
 <script src="app.js"></script>
 </body>

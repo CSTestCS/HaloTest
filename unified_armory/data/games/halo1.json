@@ -1,0 +1,160 @@
+{
+  "id": "halo1",
+  "name": "Halo: Combat Evolved",
+  "order": 1,
+  "toolkit": "Halo CE Editing Kit (HEK)",
+  "managedblam": false,
+  "models": {
+    "cyborg": {
+      "jms": "cyborg.jms",
+      "how": "Halo CE's kit can't read tags programmatically. Export characters\\cyborg\\cyborg.gbxmodel to JMS with a community CE tag tool (e.g. Mozzarilla's model exporter) and save it as {cache}\\halo1\\cyborg\\model.jms. Put its textures beside it as <material>_base.tga."
+    }
+  },
+  "pieces": [
+    {
+      "id": "helmet",
+      "slot": "helmet",
+      "name": "Mark V (CE) Helmet",
+      "model": "cyborg",
+      "select": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      }
+    },
+    {
+      "id": "chest",
+      "slot": "chest",
+      "name": "Mark V (CE) Chest",
+      "model": "cyborg",
+      "select": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_left",
+      "slot": "shoulder_left",
+      "name": "Mark V (CE) Left Shoulder",
+      "model": "cyborg",
+      "select": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      }
+    },
+    {
+      "id": "shoulder_right",
+      "slot": "shoulder_right",
+      "name": "Mark V (CE) Right Shoulder",
+      "model": "cyborg",
+      "select": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      }
+    }
+  ],
+  "target": {
+    "base_model": "cyborg",
+    "slots": {
+      "helmet": {
+        "bones": [
+          "head"
+        ],
+        "descendants": true
+      },
+      "chest": {
+        "bones": [
+          "spine",
+          "spine1",
+          "spine2"
+        ],
+        "descendants": false
+      },
+      "shoulder_left": {
+        "bones": [
+          "l_upperarm"
+        ],
+        "descendants": false
+      },
+      "shoulder_right": {
+        "bones": [
+          "r_upperarm"
+        ],
+        "descendants": false
+      },
+      "wrist": {
+        "bones": [
+          "l_forearm",
+          "r_forearm"
+        ],
+        "descendants": false
+      },
+      "knees": {
+        "bones": [
+          "l_calf",
+          "r_calf"
+        ],
+        "descendants": false
+      },
+      "utility": null
+    },
+    "format": "jms",
+    "jms_version": 8200,
+    "max_weights": 2,
+    "data_dir": "characters\\cyborg_armory",
+    "model_file": "models\\base.jms",
+    "render_model_tag": "characters\\cyborg_armory\\cyborg_armory.gbxmodel",
+    "shader_dir": "characters\\cyborg_armory\\shaders",
+    "shader_ext": "shader_model",
+    "shader_template": "characters\\cyborg\\shaders\\cyborg.shader_model",
+    "shader_bitmap_params": {
+      "base": "base map",
+      "change_color": "multipurpose map"
+    },
+    "bitmap_dir": "characters\\cyborg_armory\\bitmaps",
+    "role_suffix": {},
+    "import_commands": [
+      "tool.exe bitmaps \"{bitmap_dir}\"",
+      "tool.exe model \"{data_dir}\""
+    ],
+    "hookup": [
+      {
+        "op": "set_reference",
+        "tag": "characters\\cyborg\\cyborg.biped",
+        "field": "model",
+        "value": "{render_model_tag}"
+      }
+    ],
+    "change_colors": {
+      "bipeds": [
+        "characters\\cyborg\\cyborg.biped"
+      ],
+      "channels": {
+        "primary": 0
+      }
+    },
+    "scenarios": [
+      "levels\\a10\\a10",
+      "levels\\a30\\a30",
+      "levels\\a50\\a50",
+      "levels\\b30\\b30",
+      "levels\\b40\\b40",
+      "levels\\c10\\c10",
+      "levels\\c20\\c20",
+      "levels\\c40\\c40",
+      "levels\\d20\\d20",
+      "levels\\d40\\d40"
+    ],
+    "build_command": "tool.exe build-cache-file {scenario}"
+  },
+  "_verify": "Halo CE has no ManagedBlam: the shader and biped edits in plan.json are done by hand in Guerilla (the install script stops and lists them)."
+}

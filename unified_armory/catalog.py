@@ -1,4 +1,5 @@
-"""Loads the per-game customization catalogs and cross-game armor families."""
+"""Loads the per-game data: which armor pieces each game has, where their models
+live, and how each game receives ported armor in its campaign."""
 from __future__ import annotations
 
 import json
@@ -7,12 +8,21 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).parent / "data"
 
+SLOTS = {
+    "helmet": "Helmet",
+    "chest": "Chest",
+    "shoulder_left": "Left Shoulder",
+    "shoulder_right": "Right Shoulder",
+    "wrist": "Wrists",
+    "utility": "Utility",
+    "knees": "Knees",
+}
+DEFAULT = "default"  # keep the target game's own piece
+
 
 @dataclass
 class Catalog:
-    families: dict[str, dict]
     games: dict[str, dict]
-    palettes: dict[str, list[dict]]
 
     def game(self, game_id: str) -> dict:
         try:
@@ -20,64 +30,66 @@ class Catalog:
         except KeyError:
             raise KeyError(f"unknown game {game_id!r}; known: {', '.join(self.games)}") from None
 
-    def palette(self, game_id: str) -> list[dict]:
-        pal = self.game(game_id)["palette"]
-        return self.palettes[pal] if isinstance(pal, str) else pal
-
-    def universal_slots(self) -> dict[str, str]:
-        """Every slot any game offers, mapped to a display label."""
-        slots: dict[str, str] = {}
-        for game in self.ordered_games():
-            for slot_id, slot in game["slots"].items():
-                slots.setdefault(slot_id, slot["label"])
-        return slots
-
     def ordered_games(self) -> list[dict]:
         return sorted(self.games.values(), key=lambda g: g["order"])
 
+    def piece(self, piece_id: str) -> dict:
+        """Piece ids are '<game>/<piece>', e.g. 'reach/helmet_gungnir'."""
+        game_id, _, local = piece_id.partition("/")
+        game = self.game(game_id)
+        for p in game["pieces"]:
+            if p["id"] == local:
+                return {**p, "game": game_id, "uid": piece_id}
+        raise KeyError(f"unknown piece {piece_id!r}")
+
+    def pieces_for_slot(self, slot: str) -> list[dict]:
+        return [{**p, "game": g["id"], "uid": f"{g['id']}/{p['id']}"}
+                for g in self.ordered_games() for p in g["pieces"] if p["slot"] == slot]
+
     def to_json(self) -> dict:
         return {
-            "families": self.families,
-            "games": {g["id"]: {**g, "palette": self.palette(g["id"])} for g in self.ordered_games()},
-            "universal_slots": self.universal_slots(),
+            "slots": SLOTS,
+            "games": {g["id"]: {"id": g["id"], "name": g["name"], "toolkit": g["toolkit"],
+                                "verify": g.get("_verify", ""),
+                                "color_channels": list(g["target"]["change_colors"]["channels"])}
+                      for g in self.ordered_games()},
+            "pieces": {slot: [{"uid": p["uid"], "name": p["name"], "game": p["game"]} for p in self.pieces_for_slot(slot)]
+                       for slot in SLOTS},
         }
 
 
 def validate(cat: Catalog) -> list[str]:
-    """Return a list of problems with the catalog data (empty when valid)."""
     problems = []
-    for gid, game in cat.games.items():
-        pal = game["palette"]
-        if isinstance(pal, str) and pal not in cat.palettes:
-            problems.append(f"{gid}: unknown palette {pal!r}")
-        for slot_id, slot in game["slots"].items():
-            ids = [o["id"] for o in slot["options"]]
-            if len(ids) != len(set(ids)):
-                problems.append(f"{gid}.{slot_id}: duplicate option ids")
-            if slot.get("default") not in ids:
-                problems.append(f"{gid}.{slot_id}: default {slot.get('default')!r} is not an option")
-            for opt in slot["options"]:
-                if opt["family"] not in cat.families:
-                    problems.append(f"{gid}.{slot_id}.{opt['id']}: unknown family {opt['family']!r}")
-        camp = game["campaign"]
-        for slot_id in camp.get("region_for_slot", {}):
-            if slot_id not in game["slots"]:
-                problems.append(f"{gid}: region_for_slot names unknown slot {slot_id!r}")
-        for channel in camp.get("channels", {}):
-            if channel not in game["color_channels"]:
-                problems.append(f"{gid}: campaign channel {channel!r} is not a color channel")
-    for fid, fam in cat.families.items():
-        for s in fam["similar"]:
-            if s not in cat.families:
-                problems.append(f"family {fid}: unknown similar family {s!r}")
+    for gid, g in cat.games.items():
+        ids = [p["id"] for p in g["pieces"]]
+        if len(ids) != len(set(ids)):
+            problems.append(f"{gid}: duplicate piece ids")
+        for p in g["pieces"]:
+            if p["slot"] not in SLOTS:
+                problems.append(f"{gid}/{p['id']}: unknown slot {p['slot']!r}")
+            if p["model"] not in g["models"]:
+                problems.append(f"{gid}/{p['id']}: unknown model {p['model']!r}")
+            if not p.get("select"):
+                problems.append(f"{gid}/{p['id']}: no selector")
+        t = g["target"]
+        if t["base_model"] not in g["models"]:
+            problems.append(f"{gid}: target base_model {t['base_model']!r} is not a model")
+        for slot in t["slots"]:
+            if slot not in SLOTS:
+                problems.append(f"{gid}: target slot {slot!r} unknown")
+        if t["format"] not in ("jms", "gltf"):
+            problems.append(f"{gid}: unknown target format {t['format']!r}")
+        for m in g["models"].values():
+            if not ("tag" in m or "jms" in m):
+                problems.append(f"{gid}: model needs 'tag' or 'jms'")
+            if "tag" in m and not g.get("managedblam"):
+                problems.append(f"{gid}: tag models need ManagedBlam")
     return problems
 
 
 def load_catalog(data_dir: Path = DATA_DIR) -> Catalog:
-    families = json.loads((data_dir / "families.json").read_text())["families"]
-    palettes = {"classic": json.loads((data_dir / "palette_classic.json").read_text())["colors"]}
     games = {}
-    for path in sorted((data_dir / "catalog").glob("*.json")):
-        game = json.loads(path.read_text())
-        games[game["id"]] = game
-    return Catalog(families=families, games=games, palettes=palettes)
+    for path in sorted((data_dir / "games").glob("*.json")):
+        g = json.loads(path.read_text())
+        games[g["id"]] = g
+    return Catalog(games=games)
